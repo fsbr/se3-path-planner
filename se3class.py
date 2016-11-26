@@ -54,22 +54,32 @@ class SpecialEuclidean:
 def makeCircle(radius):
     # forms the se3 compatible set of points for buildling a circle
     # in the xy plane
-    # the parameterized equation for a circle is
     length = 100
-    t = np.linspace(-2*np.pi, 2*np.pi, 100)
+    t = np.linspace(-2*np.pi, 2*np.pi, length)
 
+    # the parameterized equation for a circle is x = rcos(t), y = sin(t)
     x = radius*np.cos(t)
     y = radius*np.sin(t)
     # make the z dimension
     z = np.zeros(length)
-    onesFiller = np.ones(length)
+
+    # add in a line from +1 to -1
+    z1 = np.linspace(4,-4,15)
+    x1 = np.zeros(15)
+    y1 = np.zeros(15)
+
+    # there are some problems with hard coding values here
+    x = np.append(x, x1)
+    y = np.append(y, y1)
+    z = np.append(z, z1)
+    onesFiller = np.ones(115)
     return np.array([[x],[y],[z],[onesFiller]])
 
 def circleTest():
     points = makeCircle(5)
     print("points dimension", points.shape)
     print("points index", points[0][0].shape)
-    rt = SpecialEuclidean(0,np.pi/2,0,2,1,-15).getse3()
+    rt = SpecialEuclidean(0,np.pi/4,0,-14,-1,-200).getse3()
 
     # the "matrix" data type allows you to operate on a ton of elements
     # all at the same time which is why its so dope
@@ -85,16 +95,62 @@ def circleTest():
     # for i in range(0,len(points[0][0])):
     #    points2.append(points[])
 
+    print("points1",points)
     print("points2", points2)
     # print("points2 dim"points2.shape)
     fig = plt.figure()
     ax = fig.add_subplot(111,projection='3d')
     print("length",len(points))
     for p in range(0,len(points[0])):
-        ax.scatter(points[0][p], points[1][p], points[2][p])
+        #ax.scatter(points[0][p], points[1][p], points[2][p])
+        pass
     for q in range(0, len(points2[0])):
         ax.scatter(points2[0][q], points2[1][q], points2[2][q])
     plt.show()
+
+    # test the getUnitVector function.  it should give (0,0,1) for the unit vector
+    u1 = getUnitVector(points2)
+    print("unit vector", u1)
+def getUnitVector(points, coords="sphere"):
+    # gets the unit vector from the line segment i super smartly added
+    # uses the set of points that define the "satellite"
+
+    # also this function returns in cartesian or cylindrical coordinates
+    print("points.shape,",len(points.shape))
+    if len(points.shape) == 3:
+        x1 = points[0][0][102]-points[0][0][114]
+        y1 = points[1][0][102]-points[1][0][114]
+        z1 = points[2][0][102]-points[2][0][114]
+    elif len(points.shape) == 2:
+        # service the post se3 multiply vectors
+        x1 = points[0][102]-points[0][114]
+        y1 = points[1][102]-points[1][114]
+        z1 = points[2][102]-points[2][114]
+    else:
+        print("an unexpected vector dimension while computing unit vector")
+    X1 = np.array([[x1],[y1],[z1]])
+    print("unit vector unnormalized", X1)
+    u = X1/np.linalg.norm(X1)
+
+    if coords=="cart":
+        print("coords = cartesian")
+        u = u
+    elif coords == "sphere":
+        print("coords = spherical")
+        x,y,z = u[0],u[1],u[2]
+        print("xyz",x,y,z)
+        r = np.sqrt(x**2 + y**2 + z**2)
+        print("r should equal 1", r)
+        theta = np.arccos(z/r)
+        print("theta, maybe its 90", theta)
+
+        # even though this equation is RIGHT, I still don't rly trust.
+        psi = np.arctan2(y,z)
+        print("psi,",psi)
+        u = np.array([[r],[theta],[psi]])
+    else:
+        print("unrecognized coordinate system, exiting program")
+    return u
 
 def simpleTest():
     rt = SpecialEuclidean(np.pi/2, 0, 0, 1, 0, 0).getse3()
@@ -117,6 +173,10 @@ if __name__ == "__main__":
     circleTest()
 
 
+
     # yes and from here I think I can just operate on lists of points that
     # define the obstacles as sets of points
     # I can actually use the output of GMAT to animate this thing attitude motion
+    # another thing to think about is that the body angles of the satellite are 3 angles
+    # but all we care about is elevation and azimuth at the end
+    # modelthe cusp as a half circle because thats where the positive flowing ions are!

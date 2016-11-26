@@ -1,0 +1,111 @@
+# try to build a graph s.t I can assign arbitrary coordinate labels to it
+# like for now, I can just have a grid -n to n, or 0,n or something.
+
+#building queue class from http://www.redblobgames.com/pathfinding/a-star/implementation.html
+import collections
+
+class Queue:
+    def __init__(self):
+        self.elements = collections.deque()
+    def empty(self):
+        # returns true if the set is empty, false otherwise
+        return len(self.elements) == 0
+    def put(self,x):
+        self.elements.append(x)
+    def get(self):
+        return self.elements.popleft()
+
+# building the simple graph from http://www.redblobgames.com/pathfinding/grids/graphs.html
+class GridGraph:
+    # builds a graph of a rectangular grid
+    # later i'll worry about labeling the coordinates
+    def __init__(self,max_x,max_y):
+        self.all_nodes = []
+
+        # define total area
+        self.max_x = max_x
+        self.max_y = max_y
+        for x in range(self.max_x):
+            for y in range(self.max_y):
+                self.all_nodes.append((x,y))
+        self.all_nodes = tuple(self.all_nodes)
+
+        # define obstacles
+        self.obstacles = []
+
+    def in_bounds(self, id):
+        (x,y) = id
+        return 0<=x < self.max_x and 0 <= y < self.max_y
+
+    def passable(self, id):
+        # true if the id isn't an obstacle
+        return id not in self.obstacles
+
+    def neighbors2(self, id):
+        (x,y) = id
+        results = [(x+1, y),(x+1, y+1), (x, y+1),(x-1, y), (x-1, y+1), (x-1, y-1), (x, y-1), (x+1,y-1)]
+        results = filter(self.in_bounds,results)
+        results = filter(self.passable, results)
+        return results
+    def neighbors(self,node):
+        # i need to make this compatible with the immutable "tuple" type
+        # connectivity 8
+        dirs = [[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]]
+        result = []
+        for dir in dirs:
+            # results vector is the list of neighbors
+            # so add the dirs to each x,y coordinate
+            neighbor = [node[0] + dir[0], node[1] + dir[1]]
+            if neighbor in self.all_nodes:
+                result.append(neighbor)
+        return result
+
+    def reconstruct_path(self, came_from, start, goal):
+        current = goal
+        path = [current]
+        while current != start:
+            current = came_from[current]
+            path.append(current)
+        path.append(start) # optional
+        path.reverse() # optional
+        return path
+
+    def breadth_first_search(self, start, goal):
+        frontier = Queue()
+        frontier.put(start)
+        came_from = {}
+        came_from[start] = None
+
+        while not frontier.empty():
+            current = frontier.get()
+            # print("current",current)
+            if current == goal:
+                break
+
+            for next in self.neighbors2(current):
+                if next not in came_from:
+                    frontier.put(next)
+                    came_from[next] = current
+
+        return came_from
+
+    def a_star_search(self, start, goal):
+        # i'll add this in later if needed
+        pass
+
+    def simpleTest(self):
+        # utility test function
+        # print("sampleGrid", self.all_nodes)
+        node1 = self.all_nodes[0]
+        # print("node", node1)
+        # print("neighbors", self.neighbors(node1))
+        parents = self.breadth_first_search((0,0),(1999,125))
+        # print("parents", parents)
+
+        # note depending on how big the grid is, using bfs is very slow
+        path = self.reconstruct_path(parents,(0,0),(1999,125))
+        print("path",path)
+
+
+if __name__ == "__main__":
+    GridGraph(2000,1000).simpleTest()
