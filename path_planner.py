@@ -3,6 +3,12 @@
 
 #building queue class from http://www.redblobgames.com/pathfinding/a-star/implementation.html
 import collections
+import datetime
+
+import numpy
+import spacepy.coordinates
+import spacepy.time
+
 
 class Queue:
     def __init__(self):
@@ -29,11 +35,9 @@ class GridGraph:
             for y in range(self.max_y):
                 self.all_nodes.append((x,y))
         self.all_nodes = tuple(self.all_nodes)
-
         # define obstacles
         self.obstacles = []
-	self.obstacles = bstacles()
-
+        # self.obstacles = getObstacles()
     def in_bounds(self, id):
         (x,y) = id
         return 0<=x < self.max_x and 0 <= y < self.max_y
@@ -98,15 +102,36 @@ class GridGraph:
         # i'll add this in later if needed
         pass
 
-    def getObstacles(self, model="square"):
+    def getObstacles(self, model="circle"):
         # this function has the purpose of automating the different obstacles
+        # this corresponds to the location of the sun.
         pass
 
     def getGoalRegion(self,model="tsyganenko"):
         # this function will return the goal location, based on the cusp location from the tsyganenko model
         # also i guess i'd incorporate that guys rotating dipole model here.
+        # the coordinates are cylindrical but you can convert to GSM
         pass
+    def tilt(self,t):
+        """Get dipole tilt for time or range of times
 
+        :param t: time or times to calculate tilt
+        :type t: list or datetime
+        :returns: positive sunward dipole tilt, in degrees, for each time
+        :rtype: list
+        """
+        t = spacepy.time.Ticktock(t)
+        c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
+                                          ticks=t)
+        c_gsm = c_sm.convert('GSM', 'car')
+        return numpy.rad2deg(numpy.arctan2(c_gsm.x, c_gsm.z))
+
+        # print(tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
+        # print(tilt(datetime.datetime(2016, 3, 3)))
+        # print(tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
+    def testTilt(self):
+        GridGraph.tilt(self, [datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i)
+            for i in range(7)])
     def simpleTest(self):
         # utility test function
         # print("sampleGrid", self.all_nodes)
@@ -122,7 +147,8 @@ class GridGraph:
 
 
 if __name__ == "__main__":
-    GridGraph(2000,1000).simpleTest()
+    # GridGraph(2000,1000).simpleTest()
+    GridGraph(2000,1000).testTilt()
 
     # some of the unanswered questions here are how do we relate translation in (x,y,z)_GSE
     # to motion on the map? The baseline attitude track is determined by the normal vector on the ellipse
