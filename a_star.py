@@ -32,6 +32,7 @@ class GridGraph:
 
         # define obstacles
         self.obstacles = []
+	self.obstacles = bstacles()
 
     def in_bounds(self, id):
         (x,y) = id
@@ -42,6 +43,8 @@ class GridGraph:
         return id not in self.obstacles
 
     def neighbors2(self, id):
+        # the main difference between this one and the original one is that
+        # the configuration space coordinates are immutable this way
         (x,y) = id
         results = [(x+1, y),(x+1, y+1), (x, y+1),(x-1, y), (x-1, y+1), (x-1, y-1), (x, y-1), (x+1,y-1)]
         results = filter(self.in_bounds,results)
@@ -88,9 +91,20 @@ class GridGraph:
                     came_from[next] = current
 
         return came_from
-
+    def dijkstras_search(self,start,goal):
+        # placeholder function for dijkstras_search
+        pass
     def a_star_search(self, start, goal):
         # i'll add this in later if needed
+        pass
+
+    def getObstacles(self, model="square"):
+        # this function has the purpose of automating the different obstacles
+        pass
+
+    def getGoalRegion(self,model="tsyganenko"):
+        # this function will return the goal location, based on the cusp location from the tsyganenko model
+        # also i guess i'd incorporate that guys rotating dipole model here.
         pass
 
     def simpleTest(self):
@@ -109,3 +123,7 @@ class GridGraph:
 
 if __name__ == "__main__":
     GridGraph(2000,1000).simpleTest()
+
+    # some of the unanswered questions here are how do we relate translation in (x,y,z)_GSE
+    # to motion on the map? The baseline attitude track is determined by the normal vector on the ellipse
+    # that defines the orbit.
