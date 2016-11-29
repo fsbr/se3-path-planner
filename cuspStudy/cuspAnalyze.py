@@ -1,7 +1,9 @@
 # okay lets do this
 import pandas as pd
 import numpy as np
+pathName = 'data/'
 filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
+filesList = [pathName+files for files in filesList]
 anglesList = [55, 60, 65, 70, 75, 80, 85]
 
 cma = []
