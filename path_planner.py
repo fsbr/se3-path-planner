@@ -113,13 +113,11 @@ class GridGraph:
         # the coordinates are cylindrical but you can convert to GSM
         pass
     def tilt(self,t):
-        """Get dipole tilt for time or range of times
-
-        :param t: time or times to calculate tilt
-        :type t: list or datetime
-        :returns: positive sunward dipole tilt, in degrees, for each time
-        :rtype: list
-        """
+        # Get dipole tilt for time or range of times
+        # :param t: time or times to calculate tilt
+        # :type t: list or datetime
+        # :returns: positive sunward dipole tilt, in degrees, for each time
+        # :rtype: list
         t = spacepy.time.Ticktock(t)
         c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
                                           ticks=t)
