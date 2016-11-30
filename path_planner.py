@@ -120,7 +120,7 @@ class GridGraph:
         pi = np.pi
         # its just one equation so i'll try to plot it and see what happens
         re = 6370
-        r = np.linspace(1*re, 10*re,1000) 
+        r = np.linspace(1, 10,1000) 
         psi = 0#np.linspace(-pi/2,pi/2)#0
         a1 = 0.1287
         a2 = 0.0314
@@ -138,6 +138,11 @@ class GridGraph:
         print("phi_c in degrees", phi_cdeg)
         plt.show()
         #print("phi_c =", 180*phi_c/np.pi)
+
+        # okay I get that the actual value is VERY low
+        # that might be good, or maybe its bad i'm not sure exactly how to
+        # check but I was expecting a value around 15 deg
+        # i get what I think would be the "right" result if I use earth radii
         
         return lowBound, highBound, lateralBound 
     def tilt(self,t):
