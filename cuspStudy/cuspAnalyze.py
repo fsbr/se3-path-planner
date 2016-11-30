@@ -1,7 +1,10 @@
 # okay lets do this
+import sys
+sys.path.append('../.')
 import pandas as pd
 import numpy as np
 import itertools as it
+import path_planner as plan
 pathName = '../../data-se3-path-planner/data/'
 filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
 filesList = [pathName+files for files in filesList]
@@ -16,11 +19,9 @@ for files in filesList:
     Ygse =  df['DefaultSC.gse.Y']
     Zgse =  df['DefaultSC.gse.Z']
 
-    # angle =  np.arctan2(Zgse, Xgse)
+    # refer to tsyganenko for these coordinate systems
     angle = np.arctan2(Xgse,Zgse)
     theta = np.arctan2(Ygse,Xgse)
-    angleTotal = [angle, theta]
-    # thresh = np.arctan2
 
     # make it into an array for iteration (probably a faster way)
 
@@ -37,10 +38,21 @@ for files in filesList:
                 # count+=1
     # angle = angle[:20]
     # lets get this boundary crossing thing right
+    # Okay I think I did it
+    lowBound = 0.2151
+    highBound = 0.2849
+    lateralBound = 5.0
+
+    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion()
+
+    # implement the tsyganenko function and dipole tilt for dynamic changing
+    # of the cusp location
     for x,y in zip(angle, theta):
-        if 0.2151<=x<=0.2849:
+        
+        # the biggest thing is a modification of these thresholds
+        if lowBound<=x<=highBound:
             # we can add in the other dimension right here
-            if abs(y)> 5*np.pi/180:
+            if abs(y)> lateralBound*np.pi/180:
                 region.append(1)
         else:
             region.append(0) 

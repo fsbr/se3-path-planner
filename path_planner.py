@@ -5,9 +5,10 @@
 import collections
 import datetime
 
-import numpy
+import numpy as np
 import spacepy.coordinates
 import spacepy.time
+import matplotlib.pyplot as plt
 
 
 class Queue:
@@ -25,7 +26,7 @@ class Queue:
 class GridGraph:
     # builds a graph of a rectangular grid
     # later i'll worry about labeling the coordinates
-    def __init__(self,max_x,max_y):
+    def __init__(self,max_x=10,max_y=10):
         self.all_nodes = []
 
         # define total area
@@ -111,7 +112,34 @@ class GridGraph:
         # this function will return the goal location, based on the cusp location from the tsyganenko model
         # also i guess i'd incorporate that guys rotating dipole model here.
         # the coordinates are cylindrical but you can convert to GSM
-        pass
+        
+        # eventually needs to take in the time as well
+        lowBound = 0.2151
+        highBound = 0.2849
+        lateralBound = 5.0
+        pi = np.pi
+        # its just one equation so i'll try to plot it and see what happens
+        re = 6370
+        r = np.linspace(1*re, 10*re,1000) 
+        psi = 0#np.linspace(-pi/2,pi/2)#0
+        a1 = 0.1287
+        a2 = 0.0314
+        phi_c0 = 0.24
+        phi_1 = phi_c0-(a1*psi + a2*psi**2)  # 75 degrees  
+        print("phi_1",phi_1)
+        num = np.sqrt(r)
+        den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
+        # print num/den
+        phi_c = num/den
+        phi_cdeg = 180*phi_c/np.pi
+        plt.plot(r,phi_c)
+        plt.xlabel('distance (r), meters')
+        plt.ylabel('zenith angle phi_c')
+        print("phi_c in degrees", phi_cdeg)
+        plt.show()
+        #print("phi_c =", 180*phi_c/np.pi)
+        
+        return lowBound, highBound, lateralBound 
     def tilt(self,t):
         # Get dipole tilt for time or range of times
         # :param t: time or times to calculate tilt
@@ -122,7 +150,7 @@ class GridGraph:
         c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
                                           ticks=t)
         c_gsm = c_sm.convert('GSM', 'car')
-        return numpy.rad2deg(numpy.arctan2(c_gsm.x, c_gsm.z))
+        return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
 
         # print(tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
         # print(tilt(datetime.datetime(2016, 3, 3)))
