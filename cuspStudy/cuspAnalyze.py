@@ -13,10 +13,13 @@ for files in filesList:
     df = pd.read_csv(files)
     print(df.tail())
     Xgse =  df['DefaultSC.gse.X']
+    Ygse =  df['DefaultSC.gse.Y']
     Zgse =  df['DefaultSC.gse.Z']
 
     # angle =  np.arctan2(Zgse, Xgse)
     angle = np.arctan2(Xgse,Zgse)
+    theta = np.arctan2(Ygse,Xgse)
+    angleTotal = [angle, theta]
     # thresh = np.arctan2
 
     # make it into an array for iteration (probably a faster way)
@@ -34,9 +37,11 @@ for files in filesList:
                 # count+=1
     # angle = angle[:20]
     # lets get this boundary crossing thing right
-    for x in angle:
+    for x,y in zip(angle, theta):
         if 0.2151<=x<=0.2849:
-            region.append(1)
+            # we can add in the other dimension right here
+            if y> 2*np.pi/180:
+                region.append(1)
         else:
             region.append(0) 
 
