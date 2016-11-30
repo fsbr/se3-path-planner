@@ -2,10 +2,10 @@
 import pandas as pd
 import numpy as np
 import itertools as it
-# pathName = 'data/'
-# filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
-# filesList = [pathName+files for files in filesList]
-filesList = ['smallstep1day.txt']
+pathName = '../../data-se3-path-planner/data/'
+filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
+filesList = [pathName+files for files in filesList]
+# filesList = ['80deg.txt']
 anglesList = [55, 60, 65, 70, 75, 80, 85]
 
 cma = []
@@ -40,7 +40,7 @@ for files in filesList:
     for x,y in zip(angle, theta):
         if 0.2151<=x<=0.2849:
             # we can add in the other dimension right here
-            if y> 2*np.pi/180:
+            if abs(y)> 5*np.pi/180:
                 region.append(1)
         else:
             region.append(0) 
