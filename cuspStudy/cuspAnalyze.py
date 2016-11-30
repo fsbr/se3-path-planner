@@ -1,49 +1,75 @@
 # okay lets do this
 import pandas as pd
 import numpy as np
-pathName = 'data/'
-filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
-filesList = [pathName+files for files in filesList]
+import itertools as it
+# pathName = 'data/'
+# filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
+# filesList = [pathName+files for files in filesList]
+filesList = ['smallstep1day.txt']
 anglesList = [55, 60, 65, 70, 75, 80, 85]
 
 cma = []
-npi = 0
 for files in filesList:
     df = pd.read_csv(files)
     print(df.tail())
     Xgse =  df['DefaultSC.gse.X']
     Zgse =  df['DefaultSC.gse.Z']
 
-    angle =  np.arctan2(df['DefaultSC.gse.Z'], df['DefaultSC.gse.X'])
+    # angle =  np.arctan2(Zgse, Xgse)
+    angle = np.arctan2(Xgse,Zgse)
+    # thresh = np.arctan2
 
     # make it into an array for iteration (probably a faster way)
 
     print(angle)
     print(len(angle))
     count = 0
-    for x in angle:
+    region = []
+    # for x,x1 in zip(angle, angle[1:]):
+        # eventually this has to be modified so that the unh professors script
+        # will alter the dipole angle
         # These numbers are from the tsyganenko script that I wrote a while back
+        # if x<0.2151 or x> 0.2849:
+        #     if 0.2151<=x1<=0.2849:
+                # count+=1
+    # angle = angle[:20]
+    # lets get this boundary crossing thing right
+    for x in angle:
         if 0.2151<=x<=0.2849:
-            count+=1
+            region.append(1)
+        else:
+            region.append(0) 
 
-    print(count)
+    for x,x1 in zip(region, region[1:]):
+        if x==0 and x1 == 1:
+            count+=1 
+        else:
+            print("not in the cusp yo.")
+    print("x", angle)
+    print("x1", angle[1:])
+    
+    print("count",count)
     cma.append([count])
-    npi+=1
 
-    print(cma)
+    print("cma", cma)
+    print("region",region)
+    print("region", region[:100])
 
-from pylab import *
-cdict = {'red': ((0.0, 0.0, 0.0),
-                 (0.5, 1.0, 0.7),
-                 (1.0, 1.0, 1.0)),
-         'green': ((0.0, 0.0, 0.0),
-                   (0.5, 1.0, 0.0),
-                   (1.0, 1.0, 1.0)),
-         'blue': ((0.0, 0.0, 0.0),
-                  (0.5, 1.0, 0.0),
-                  (1.0, 0.5, 1.0))}
-my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
-pcolor(cma,cmap=my_cmap)
-colorbar()
-plt.show()
+
+if __name__ == "__main__":
+
+    from pylab import *
+    cdict = {'red': ((0.0, 0.0, 0.0),
+                     (0.5, 1.0, 0.7),
+                     (1.0, 1.0, 1.0)),
+             'green': ((0.0, 0.0, 0.0),
+                       (0.5, 1.0, 0.0),
+                       (1.0, 1.0, 1.0)),
+             'blue': ((0.0, 0.0, 0.0),
+                      (0.5, 1.0, 0.0),
+                      (1.0, 0.5, 1.0))}
+    my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
+    pcolor(cma,cmap=my_cmap)
+    colorbar()
+    plt.show()
 
