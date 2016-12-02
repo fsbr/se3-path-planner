@@ -37,8 +37,9 @@ class GridGraph:
                 self.all_nodes.append((x,y))
         self.all_nodes = tuple(self.all_nodes)
         # define obstacles
-        self.obstacles = []
-        # self.obstacles = getObstacles()
+        # self.obstacles = [(2,0), (3,0),(4,0),(2,1),(3,1),(4,1),(2,2),(3,2),(4,2),(14,11)]
+        #self.obstacles = []
+        self.obstacles = self.getObstacles()
     def in_bounds(self, id):
         (x,y) = id
         return 0<=x < self.max_x and 0 <= y < self.max_y
@@ -103,10 +104,25 @@ class GridGraph:
         # i'll add this in later if needed
         pass
 
-    def getObstacles(self, model="circle"):
+    def getObstacles(self, model="grid"):
         # this function has the purpose of automating the different obstacles
         # this corresponds to the location of the sun.
-        pass
+        # generates obstacles of a certain shape 
+        obstacles = [] 
+        startPoint = (2,2)
+        start_x = startPoint[0]
+        start_y = startPoint[1]
+        print("startx", start_x)
+        print("starty", start_y)
+        # make a 10x10 grid
+        length_x = 10 
+        length_y = 15
+        for x in range(0,length_x):
+            for y in range(0,length_y):
+                obstacles.append([start_x+x, start_y+y])
+        obstacles = tuple(obstacles)
+        print("obstacles list,",obstacles)
+        return obstacles
 
     def getGoalRegion(self,model="tsyganenko"):
         # this function will return the goal location, based on the cusp location from the tsyganenko model
@@ -157,9 +173,10 @@ class GridGraph:
         c_gsm = c_sm.convert('GSM', 'car')
         return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
 
-        # print(tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
-        # print(tilt(datetime.datetime(2016, 3, 3)))
-        # print(tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
+        print(tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
+        print(tilt(datetime.datetime(2016, 3, 3)))
+        print(tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
+
     def testTilt(self):
         GridGraph.tilt(self, [datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i)
             for i in range(7)])
@@ -169,17 +186,17 @@ class GridGraph:
         node1 = self.all_nodes[0]
         # print("node", node1)
         # print("neighbors", self.neighbors(node1))
-        parents = self.breadth_first_search((0,0),(1999,125))
+        parents = self.breadth_first_search((0,0),(15,12))
         # print("parents", parents)
 
         # note depending on how big the grid is, using bfs is very slow
-        path = self.reconstruct_path(parents,(0,0),(1999,125))
+        path = self.reconstruct_path(parents,(0,0),(15,12))
         print("path",path)
 
 
 if __name__ == "__main__":
-    # GridGraph(2000,1000).simpleTest()
-    GridGraph(2000,1000).testTilt()
+    GridGraph(60,40).simpleTest()
+    GridGraph(20,10).testTilt()
 
     # some of the unanswered questions here are how do we relate translation in (x,y,z)_GSE
     # to motion on the map? The baseline attitude track is determined by the normal vector on the ellipse
