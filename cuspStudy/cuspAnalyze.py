@@ -6,10 +6,10 @@ import numpy as np
 import itertools as it
 import path_planner as plan
 pathName = '../../data-se3-path-planner/data/'
-filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
-filesList = [pathName+files for files in filesList]
-# filesList = ['80deg.txt']
-anglesList = [55, 60, 65, 70, 75, 80, 85]
+# filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
+# filesList = [pathName+files for files in filesList]
+filesList = ['80deg.txt']
+# anglesList = [55, 60, 65, 70, 75, 80, 85]
 
 cma = []
 for files in filesList:

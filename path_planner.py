@@ -32,6 +32,8 @@ class GridGraph:
         # define total area
         self.max_x = max_x
         self.max_y = max_y
+        
+        # this also works with range argument (-maxx, maxx), (-maxy,maxy) etc.
         for x in range(self.max_x):
             for y in range(self.max_y):
                 self.all_nodes.append((x,y))
@@ -112,8 +114,8 @@ class GridGraph:
         startPoint = (2,2)
         start_x = startPoint[0]
         start_y = startPoint[1]
-        print("startx", start_x)
-        print("starty", start_y)
+        # print("startx", start_x)
+        # print("starty", start_y)
         # make a 10x10 grid
         length_x = 10 
         length_y = 15
@@ -121,7 +123,7 @@ class GridGraph:
             for y in range(0,length_y):
                 obstacles.append([start_x+x, start_y+y])
         obstacles = tuple(obstacles)
-        print("obstacles list,",obstacles)
+        # print("obstacles list,",obstacles)
         return obstacles
 
     def getGoalRegion(self,model="tsyganenko"):
@@ -161,7 +163,7 @@ class GridGraph:
         # i get what I think would be the "right" result if I use earth radii
         
         return lowBound, highBound, lateralBound 
-    def tilt(self,t):
+    deff tilt(self,t):
         # Get dipole tilt for time or range of times
         # :param t: time or times to calculate tilt
         # :type t: list or datetime
@@ -171,11 +173,21 @@ class GridGraph:
         c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
                                           ticks=t)
         c_gsm = c_sm.convert('GSM', 'car')
+
+        return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
+ tilt(self,t):
+        # Get dipole tilt for time or range of times
+        # :param t: time or times to calculate tilt
+        # :type t: list or datetime
+        # :returns: positive sunward dipole tilt, in degrees, for each time
+        # :rtype: list
+        t = spacepy.time.Ticktock(t)
+        c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
+                                          ticks=t)
+        c_gsm = c_sm.convert('GSM', 'car')
+
         return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
 
-        print(tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
-        print(tilt(datetime.datetime(2016, 3, 3)))
-        print(tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
 
     def testTilt(self):
         GridGraph.tilt(self, [datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i)
@@ -195,9 +207,15 @@ class GridGraph:
 
 
 if __name__ == "__main__":
-    GridGraph(60,40).simpleTest()
-    GridGraph(20,10).testTilt()
+    
+    # need to specify the UNITS for this thing
+    # GridGraph(60,40).simpleTest()
+    # GridGraph(20,10).testTilt()
 
+    # print(GridGraph().tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
+    # print(GridGraph().tilt(datetime.datetime(2016, 3, 3)))
+    # print(GridGraph().tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
+    #GridGraph()
     # some of the unanswered questions here are how do we relate translation in (x,y,z)_GSE
     # to motion on the map? The baseline attitude track is determined by the normal vector on the ellipse
     # that defines the orbit.
