@@ -132,9 +132,16 @@ class GridGraph:
         # the coordinates are cylindrical but you can convert to GSM
         
         # eventually needs to take in the time as well
+
+        # legacy "test" outputs use to test function 
         lowBound = 0.2151       # s
         highBound = 0.2849      # s
-        lateralBound = 5.0      # s
+        
+        # threshold 
+        thresh = 2*np.pi/180 # two degrees
+        lateralBound = 2.0      # s
+
+        
         pi = np.pi              # s
         # its just one equation so i'll try to plot it and see what happens
         re = 6370               # s
@@ -153,20 +160,31 @@ class GridGraph:
         phi_cdeg = 180*phi_c/np.pi # + self.tilt(time)
 
         # somewhere in here i do the coordinate transformation
-        print("phi_c", phi_c)
-        print("phi_cdeg =,", phi_cdeg)        
+        # print("phi_c", phi_c)
+        # print("phi_cdeg =,", phi_cdeg)        
         
         # verify these coordinates with the tsyganenko paper
-        Zgsm = np.cos(phi_c)
-        Xgsm = np.sin(phi_c)
-
-        c_gsm = spacepy.coordinates.Coords([Xgsm, 0, Zgsm], 'GSM', 'car', ticks=time)
+        Zgsm = np.cos(phi_c).tolist()
+        Xgsm = np.sin(phi_c).tolist()
+        # print("ZGSM", Zgsm)
+        # print("Xgsm", Xgsm)
+        t = spacepy.time.Ticktock(time,'MJD')
+        # print("TIME TIME TIME", t)
+        # print("xgsm length", len(Xgsm))
+        # print("TIME length", len(t))
+        c_gsm = spacepy.coordinates.Coords([[Xgsm, 0, Zgsm]]*len(t), 'GSM', 'car', ticks=t)
         c_gse = c_gsm.convert('GSE', 'car')
         
         # need  a way to implement t with this coordinate transform
-        newPhi_c = np.artan2(c_gse.x, c_gse.z)
-        print("newPhi_c", newPhi_c)
+
+        # the fact that I'm using [0] here means we aren't using the dinural change
+        newPhi_c = np.arctan2(c_gse.x, c_gse.z)[0]
         
+        # possible dimensions problem here
+        # print("newPhi_c", newPhi_c)
+        lowbound = newPhi_c - thresh
+        highBound = newPhi_c + thresh
+        lateralBound = lateralBound 
  
         # plt.plot(r,phi_c)
         # plt.xlabel('distance (r), earth radii')
@@ -180,7 +198,6 @@ class GridGraph:
         # that might be good, or maybe its bad i'm not sure exactly how to
         # check but I was expecting a value around 15 deg
         # i get what I think would be the "right" result if I use earth radii
-        
         return lowBound, highBound, lateralBound 
     def tilt(self,t):
         # Get dipole tilt for time or range of times
@@ -188,6 +205,7 @@ class GridGraph:
         # :type t: list or datetime
         # :returns: positive sunward dipole tilt, in degrees, for each time
         # :rtype: list
+        print("t before,", t)
         t = spacepy.time.Ticktock(t,'JD')
         print("important time part", t)
         c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
