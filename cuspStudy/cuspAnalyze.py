@@ -1,4 +1,4 @@
-# okay lets do this
+#2 okay lets do this
 import sys
 sys.path.append('../.')
 import pandas as pd
@@ -26,6 +26,9 @@ def createCma(files):
     Ygse =  df['DefaultSC.gse.Y']
     Zgse =  df['DefaultSC.gse.Z']
 
+    # i am DEFINITELY going to end up with a dimension problem here
+    t = df['DefaultSC.A1ModJulian']
+
     # refer to tsyganenko for these coordinate systems
     angle = np.arctan2(Xgse,Zgse)
     theta = np.arctan2(Ygse,Xgse)
@@ -46,9 +49,9 @@ def createCma(files):
     # angle = angle[:20]
     # lets get this boundary crossing thing right
     # Okay I think I did it
-    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion()
-    lowBound = 0.2151/2
-    highBound = 0.2849/2
+    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion(t[38971])
+    lowBound = 0.2151
+    highBound = 0.2849
     lateralBound = 5.0/2
 
 
@@ -59,7 +62,7 @@ def createCma(files):
         # the biggest thing is a modification of these thresholds
         if lowBound<=x<=highBound:
             # we can add in the other dimension right here
-            if abs(y)> lateralBound*np.pi/180:
+            if abs(y)< lateralBound*np.pi/180:
                 region.append(1)
         else:
             region.append(0) 
@@ -107,5 +110,6 @@ if __name__ == "__main__":
     colorbar()
     plt.title('Cusp Crossings')
     plt.xlabel('Start Month')
+    plt.ylabel('60+5y deg inclination')
     plt.show()
 

@@ -126,19 +126,20 @@ class GridGraph:
         # print("obstacles list,",obstacles)
         return obstacles
 
-    def getGoalRegion(self,model="tsyganenko"):
+    def getGoalRegion(self,time,model="tsyganenko"):
         # this function will return the goal location, based on the cusp location from the tsyganenko model
         # also i guess i'd incorporate that guys rotating dipole model here.
         # the coordinates are cylindrical but you can convert to GSM
         
         # eventually needs to take in the time as well
-        lowBound = 0.2151
-        highBound = 0.2849
-        lateralBound = 5.0
-        pi = np.pi
+        lowBound = 0.2151       # s
+        highBound = 0.2849      # s
+        lateralBound = 5.0      # s
+        pi = np.pi              # s
         # its just one equation so i'll try to plot it and see what happens
-        re = 6370
-        r = np.linspace(1, 10,1000) 
+        re = 6370               # s
+        # r = np.linspace(1, 10,1000)     # v 
+        r = re+150
         psi = 0#np.linspace(-pi/2,pi/2)#0
         a1 = 0.1287
         a2 = 0.0314
@@ -149,7 +150,24 @@ class GridGraph:
         den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
         # print num/den
         phi_c = num/den
-        phi_cdeg = 180*phi_c/np.pi
+        phi_cdeg = 180*phi_c/np.pi # + self.tilt(time)
+
+        # somewhere in here i do the coordinate transformation
+        print("phi_c", phi_c)
+        print("phi_cdeg =,", phi_cdeg)        
+        
+        # verify these coordinates with the tsyganenko paper
+        Zgsm = np.cos(phi_c)
+        Xgsm = np.sin(phi_c)
+
+        c_gsm = spacepy.coordinates.Coords([Xgsm, 0, Zgsm], 'GSM', 'car')
+        c_gse = c_gsm.convert('GSE', 'car')
+        
+        # need  a way to implement t with this coordinate transform
+        newPhi_c = np.artan2(c_gse.x, c_gse.z)
+        print("newPhi_c", newPhi_c)
+        
+ 
         # plt.plot(r,phi_c)
         # plt.xlabel('distance (r), earth radii')
         # plt.title('Cusp Geometric Properties')
@@ -170,10 +188,12 @@ class GridGraph:
         # :type t: list or datetime
         # :returns: positive sunward dipole tilt, in degrees, for each time
         # :rtype: list
-        t = spacepy.time.Ticktock(t)
+        t = spacepy.time.Ticktock(t,'JD')
+        print("important time part", t)
         c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
                                           ticks=t)
         c_gsm = c_sm.convert('GSM', 'car')
+        # c_gsm = c_sm.convert('GSE', 'car')
 
         return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
  
