@@ -160,7 +160,7 @@ class GridGraph:
         Zgsm = np.cos(phi_c)
         Xgsm = np.sin(phi_c)
 
-        c_gsm = spacepy.coordinates.Coords([Xgsm, 0, Zgsm], 'GSM', 'car')
+        c_gsm = spacepy.coordinates.Coords([Xgsm, 0, Zgsm], 'GSM', 'car', ticks=np.asarray(time))
         c_gse = c_gsm.convert('GSE', 'car')
         
         # need  a way to implement t with this coordinate transform
@@ -224,6 +224,14 @@ if __name__ == "__main__":
     # print(GridGraph().tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
     # print(GridGraph().tilt(datetime.datetime(2016, 3, 3)))
     # print(GridGraph().tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
+
+
+    # YUMMMMM
+    # basically to get my code to work, i'll just make it take in a julian time instead of a datetime object
+
+
+
+
     #GridGraph()
     # some of the unanswered questions here are how do we relate translation in (x,y,z)_GSE
     # to motion on the map? The baseline attitude track is determined by the normal vector on the ellipse

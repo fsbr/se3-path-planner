@@ -49,9 +49,9 @@ def createCma(files):
     # angle = angle[:20]
     # lets get this boundary crossing thing right
     # Okay I think I did it
-    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion(t[38971])
-    lowBound = 0.2151
-    highBound = 0.2849
+    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion(t.all())
+    lowBound = 0.2151/2
+    highBound = 0.2849/2
     lateralBound = 5.0/2
 
 
