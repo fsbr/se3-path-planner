@@ -79,7 +79,7 @@ def circleTest():
     points = makeCircle(5)
     print("points dimension", points.shape)
     print("points index", points[0][0].shape)
-    rt = SpecialEuclidean(0,np.pi/4,0,-14,-1,-200).getse3()
+    rt = SpecialEuclidean(0,np.pi/4,0,-5,-10,-2).getse3()
 
     # the "matrix" data type allows you to operate on a ton of elements
     # all at the same time which is why its so dope
@@ -102,10 +102,14 @@ def circleTest():
     ax = fig.add_subplot(111,projection='3d')
     print("length",len(points))
     for p in range(0,len(points[0])):
-        #ax.scatter(points[0][p], points[1][p], points[2][p])
+        ax.scatter(points[0][p], points[1][p], points[2][p])
         pass
     for q in range(0, len(points2[0])):
         ax.scatter(points2[0][q], points2[1][q], points2[2][q])
+    plt.xlabel('x_{gse}')
+    plt.ylabel('y_{gse}')
+    # plt.zlabel('z_{gse}')
+    plt.title('SE(3) demonstration')
     plt.show()
 
     # test the getUnitVector function.  it should give (0,0,1) for the unit vector

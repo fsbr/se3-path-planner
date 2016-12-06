@@ -39,9 +39,9 @@ class GridGraph:
                 self.all_nodes.append((x,y))
         self.all_nodes = tuple(self.all_nodes)
         # define obstacles
-        # self.obstacles = [(2,0), (3,0),(4,0),(2,1),(3,1),(4,1),(2,2),(3,2),(4,2),(14,11)]
-        #self.obstacles = []
-        self.obstacles = self.getObstacles()
+        self.obstacles = [(2,0), (3,0),(4,0),(2,1),(3,1),(4,1),(2,2),(3,2),(4,2),(14,11)]
+        # self.obstacles = []
+        # self.obstacles = self.getObstacles()
     def in_bounds(self, id):
         (x,y) = id
         return 0<=x < self.max_x and 0 <= y < self.max_y
@@ -151,7 +151,8 @@ class GridGraph:
         phi_c = num/den
         phi_cdeg = 180*phi_c/np.pi
         plt.plot(r,phi_c)
-        plt.xlabel('distance (r), meters')
+        plt.xlabel('distance (r), earth radii')
+        plt.title('Cusp Geometric Properties')
         plt.ylabel('zenith angle phi_c')
         print("phi_c in degrees", phi_cdeg)
         plt.show()
@@ -163,7 +164,7 @@ class GridGraph:
         # i get what I think would be the "right" result if I use earth radii
         
         return lowBound, highBound, lateralBound 
-    deff tilt(self,t):
+    def tilt(self,t):
         # Get dipole tilt for time or range of times
         # :param t: time or times to calculate tilt
         # :type t: list or datetime
@@ -175,19 +176,7 @@ class GridGraph:
         c_gsm = c_sm.convert('GSM', 'car')
 
         return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
- tilt(self,t):
-        # Get dipole tilt for time or range of times
-        # :param t: time or times to calculate tilt
-        # :type t: list or datetime
-        # :returns: positive sunward dipole tilt, in degrees, for each time
-        # :rtype: list
-        t = spacepy.time.Ticktock(t)
-        c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
-                                          ticks=t)
-        c_gsm = c_sm.convert('GSM', 'car')
-
-        return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
-
+ 
 
     def testTilt(self):
         GridGraph.tilt(self, [datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i)
@@ -209,7 +198,7 @@ class GridGraph:
 if __name__ == "__main__":
     
     # need to specify the UNITS for this thing
-    # GridGraph(60,40).simpleTest()
+    GridGraph(60,40).simpleTest()
     # GridGraph(20,10).testTilt()
 
     # print(GridGraph().tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
