@@ -28,6 +28,7 @@ def createCma(files):
 
     # i am DEFINITELY going to end up with a dimension problem here
     t = df['DefaultSC.A1ModJulian']
+    print("type of t", type(np.asarray(t)))
 
     # refer to tsyganenko for these coordinate systems
     angle = np.arctan2(Xgse,Zgse)
@@ -49,7 +50,7 @@ def createCma(files):
     # angle = angle[:20]
     # lets get this boundary crossing thing right
     # Okay I think I did it
-    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion(t.all())
+    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion(t.tolist())
     lowBound = 0.2151/2
     highBound = 0.2849/2
     lateralBound = 5.0/2

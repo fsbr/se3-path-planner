@@ -160,7 +160,7 @@ class GridGraph:
         Zgsm = np.cos(phi_c)
         Xgsm = np.sin(phi_c)
 
-        c_gsm = spacepy.coordinates.Coords([Xgsm, 0, Zgsm], 'GSM', 'car', ticks=np.asarray(time))
+        c_gsm = spacepy.coordinates.Coords([Xgsm, 0, Zgsm], 'GSM', 'car', ticks=time)
         c_gse = c_gsm.convert('GSE', 'car')
         
         # need  a way to implement t with this coordinate transform
