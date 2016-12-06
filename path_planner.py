@@ -144,18 +144,18 @@ class GridGraph:
         a2 = 0.0314
         phi_c0 = 0.24
         phi_1 = phi_c0-(a1*psi + a2*psi**2)  # 75 degrees  
-        print("phi_1",phi_1)
+        # print("phi_1",phi_1)
         num = np.sqrt(r)
         den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
         # print num/den
         phi_c = num/den
         phi_cdeg = 180*phi_c/np.pi
-        plt.plot(r,phi_c)
-        plt.xlabel('distance (r), earth radii')
-        plt.title('Cusp Geometric Properties')
-        plt.ylabel('zenith angle phi_c')
-        print("phi_c in degrees", phi_cdeg)
-        plt.show()
+        # plt.plot(r,phi_c)
+        # plt.xlabel('distance (r), earth radii')
+        # plt.title('Cusp Geometric Properties')
+        # plt.ylabel('zenith angle phi_c')
+        # print("phi_c in degrees", phi_cdeg)
+        # plt.show()
         #print("phi_c =", 180*phi_c/np.pi)
 
         # okay I get that the actual value is VERY low

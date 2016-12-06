@@ -5,16 +5,23 @@ import pandas as pd
 import numpy as np
 import itertools as it
 import path_planner as plan
-pathName = '../../data-se3-path-planner/data/'
+pathName = '../../data-se3-path-planner/cherylData/'
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+inclinations = ['65', '70', '75', '80', '85', '90']
+
+filesList =[[pathName+month+inclination+'.txt' for month in months ] for inclination in inclinations] 
+# print( filesList)
 # filesList = ['55deg.txt', '60deg.txt','65deg.txt', '70deg.txt', '75deg.txt','80deg.txt','85deg.txt']
 # filesList = [pathName+files for files in filesList]
-filesList = ['80deg.txt']
+# filesList = ['80deg.txt']
 # anglesList = [55, 60, 65, 70, 75, 80, 85]
 
 cma = []
-for files in filesList:
+    
+def createCma(files):
+    # print("FILES", files)
     df = pd.read_csv(files)
-    print(df.tail())
+    # print(df.tail())
     Xgse =  df['DefaultSC.gse.X']
     Ygse =  df['DefaultSC.gse.Y']
     Zgse =  df['DefaultSC.gse.Z']
@@ -25,8 +32,8 @@ for files in filesList:
 
     # make it into an array for iteration (probably a faster way)
 
-    print(angle)
-    print(len(angle))
+    # print(angle)
+    # print(len(angle))
     count = 0
     region = []
     # for x,x1 in zip(angle, angle[1:]):
@@ -39,11 +46,11 @@ for files in filesList:
     # angle = angle[:20]
     # lets get this boundary crossing thing right
     # Okay I think I did it
-    lowBound = 0.2151
-    highBound = 0.2849
-    lateralBound = 5.0
-
     lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion()
+    lowBound = 0.2151/2
+    highBound = 0.2849/2
+    lateralBound = 5.0/2
+
 
     # implement the tsyganenko function and dipole tilt for dynamic changing
     # of the cusp location
@@ -61,17 +68,27 @@ for files in filesList:
         if x==0 and x1 == 1:
             count+=1 
         else:
-            print("not in the cusp yo.")
-    print("x", angle)
-    print("x1", angle[1:])
+            # print("not in the cusp yo.")
+            pass
+    # print("x", angle)
+    # print("x1", angle[1:])
     
-    print("count",count)
+    # print("count",count)
+
+    # the main problem is with the dimensions of the cma variable
+    # so how do i get cma to have the same dimensions as filesList?
     cma.append([count])
 
-    print("cma", cma)
-    print("region",region)
-    print("region", region[:100])
+    # print("cma", cma)
+    # print("region",region)
+    # print("region", region[:100])
+    return count
 
+cma2 =[]
+
+# the fact that you can call a function in a list comprehension is the number one reason
+# why i'm going to stick with python
+cma2  =[[createCma(pathName+month+inclination+'.txt') for month in months ] for inclination in inclinations] 
 
 if __name__ == "__main__":
 
@@ -86,7 +103,9 @@ if __name__ == "__main__":
                       (0.5, 1.0, 0.0),
                       (1.0, 0.5, 1.0))}
     my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
-    pcolor(cma,cmap=my_cmap)
+    pcolor(cma2,cmap=my_cmap)
     colorbar()
+    plt.title('Cusp Crossings')
+    plt.xlabel('Start Month')
     plt.show()
 
