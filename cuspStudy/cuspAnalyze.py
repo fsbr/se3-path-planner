@@ -7,7 +7,7 @@ import itertools as it
 import path_planner as plan
 pathName = '../../data-se3-path-planner/cherylData/'
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-inclinations = ['65', '70', '75', '80', '85', '90']
+inclinations = ['55', '60', '65', '70', '75', '80', '85', '90']
 inclinations = inclinations[::-1] # reverses the inclinations 
 
 filesList =[[pathName+month+inclination+'.txt' for month in months ] for inclination in inclinations] 
@@ -34,8 +34,13 @@ def createCma(files):
    #  print("type of t", type(t.tolist()))
 
     # refer to tsyganenko for these coordinate systems
+    # the output here is in radians
     angle = np.arctan2(Xgse,Zgse)
-    theta = np.arctan2(Ygse,Xgse)
+    theta = np.arctan2(Ygse,Xgse) # degrees
+
+    # but sometimes i print it in degrees
+    # print("angle is" , angle * 180 / np.pi)
+    # print("theta is", theta)
 
     # make it into an array for iteration (probably a faster way)
 
@@ -53,7 +58,7 @@ def createCma(files):
     # angle = angle[:20]
     # lets get this boundary crossing thing right
     # Okay I think I did it
-    lowBound,highBound,lateralBound = plan.GridGraph().getGoalRegion(t)
+    lowBound,highBound,lowLateralBound, highLateralBound = plan.GridGraph().getGoalRegion(t)
     # lowBound = 0.2151/2
     # highBound = 0.2849/2
     # lateralBound = 5.0/2
@@ -66,7 +71,7 @@ def createCma(files):
         # the biggest thing is a modification of these thresholds
         if lowBound<=x<=highBound:
             # we can add in the other dimension right here
-            if abs(y)< lateralBound*np.pi/180:
+            if lowLateralBound<=y<= highLateralBound:
                 region.append(1)
         else:
             region.append(0) 
@@ -75,7 +80,6 @@ def createCma(files):
         if x==0 and x1 == 1:
             count+=1 
         else:
-            # print("not in the cusp yo.")
             pass
     # print("x", angle)
     # print("x1", angle[1:])
