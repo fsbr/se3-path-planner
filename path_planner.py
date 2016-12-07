@@ -173,16 +173,19 @@ class GridGraph:
         t = spacepy.time.Ticktock(time,'MJD')
         # print("time object,", t)
         # print("TIME original input", time)
+
+
+        ### SOMETHING IS WRONG IN TSYGANENKO
         phi_c = np.arcsin(num/den) + self.tilt(t)*np.pi/180
         phi_cdeg = 180*phi_c/np.pi # + self.tilt(time)
-        phi_c = phi_c[0]
+        # phi_c = phi_c[0]
         # print("PHI_C", phi_c)
 
         print("about to start plotting!")
-        plt.plot(time,phi_cdeg)
-        plt.show()
+        # c_gse = i
+        # plt.plot(time,phi_cdeg)
+        # plt.show()
 
-        print("i'm done plotting!")
         # somewhere in here i do the coordinate transformation
         # print("phi_c", phi_c)
         # print("phi_cdeg =,", phi_cdeg)        
@@ -192,6 +195,11 @@ class GridGraph:
         Xsm = np.sin(phi_c).tolist()
 
         c_sm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]]*len(t), 'SM', 'car', ticks=t)
+        c_gsm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]]*len(t), 'GSM', 'car', ticks=t)
+        plt.plot(time, np.arctan2(c_gsm.x, c_gsm.z))
+        plt.show()
+        
+        print("i'm done plotting!")
         c_gse = c_sm.convert('GSE', 'car')
         
         # need  a way to implement t with this coordinate transform
@@ -234,7 +242,7 @@ class GridGraph:
         c_gse = c_sm.convert('GSE', 'car')
         
         # j niehof originally used c_gsm
-        return np.arctan2(c_gse.x, c_gse.z)
+        return np.arctan2(c_gsm.x, c_gsm.z)
  
 
     def testTilt(self):
