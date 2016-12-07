@@ -153,6 +153,8 @@ class GridGraph:
         lateralBound = 2.0*np.pi/180      # s
 
         
+
+        ### THIS STUFF IS ALL IN THE SOLAR MAGNETIC FRAME
         pi = np.pi              # s
         # its just one equation so i'll try to plot it and see what happens
         re = 6370               # s
@@ -230,8 +232,9 @@ class GridGraph:
                                           ticks=t)
         c_gsm = c_sm.convert('GSM', 'car')
         c_gse = c_sm.convert('GSE', 'car')
-
-        return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
+        
+        # j niehof originally used c_gsm
+        return np.arctan2(c_gse.x, c_gse.z)
  
 
     def testTilt(self):
