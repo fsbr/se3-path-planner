@@ -105,6 +105,14 @@ class GridGraph:
     def a_star_search(self, start, goal):
         # i'll add this in later if needed
         pass
+    
+    def sunLocation(threshold):
+        # the idea is that this defines an angular position of the sun. 
+        # what I really want to do is get the sun vector in GSE coordinates
+
+        # the sun center point is on the end of the x unit vector 
+        sunVector np.array([1,0,0])
+          
 
     def getObstacles(self, model="grid"):
         # this function has the purpose of automating the different obstacles

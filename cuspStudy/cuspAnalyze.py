@@ -8,6 +8,7 @@ import path_planner as plan
 pathName = '../../data-se3-path-planner/cherylData/'
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 inclinations = ['65', '70', '75', '80', '85', '90']
+inclinations = inclinations[::-1] # reverses the inclinations 
 
 filesList =[[pathName+month+inclination+'.txt' for month in months ] for inclination in inclinations] 
 # print( filesList)
@@ -99,15 +100,28 @@ cma2  =[[createCma(pathName+month+inclination+'.txt') for month in months ] for 
 if __name__ == "__main__":
 
     from pylab import *
-    cdict = {'red': ((0.0, 0.0, 0.0),
-                     (0.5, 1.0, 0.7),
-                     (1.0, 1.0, 1.0)),
-             'green': ((0.0, 0.0, 0.0),
-                       (0.5, 1.0, 0.0),
-                       (1.0, 1.0, 1.0)),
-             'blue': ((0.0, 0.0, 0.0),
-                      (0.5, 1.0, 0.0),
-                      (1.0, 0.5, 1.0))}
+    #cdict = {'red': ((0.0, 0.0, 0.0),
+    #                 (0.5, 1.0, 0.7),
+    #                 (1.0, 1.0, 1.0)),
+    #         'green': ((0.0, 0.0, 0.0),
+    #                   (0.5, 1.0, 0.0),
+    #                   (1.0, 1.0, 1.0)),
+    #         'blue': ((0.0, 0.0, 0.0),
+    #                  (0.5, 1.0, 0.0),
+    #                  (1.0, 0.5, 1.0))}
+
+    cdict = {'red':   [(0.0,  0.0, 0.0),
+                   (0.5,  1.0, 1.0),
+                   (1.0,  1.0, 1.0)],
+
+         'green': [(0.0,  0.0, 0.0),
+                   (0.25, 0.0, 0.0),
+                   (0.75, 1.0, 1.0),
+                   (1.0,  1.0, 1.0)],
+
+         'blue':  [(0.0,  0.0, 0.0),
+                   (0.5,  0.0, 0.0),
+                   (1.0,  1.0, 1.0)]}
     my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
     pcolor(cma2,cmap=my_cmap)
     colorbar()
