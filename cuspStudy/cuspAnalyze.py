@@ -68,9 +68,8 @@ def createCma(files):
     for x,y in zip(angle, theta):
         
         # the biggest thing is a modification of these thresholds
-        if lowBound<=x<=highBound:
-            # we can add in the other dimension right here
-            if lowLateralBound<=y<=highLateralBound:
+        if lowBound<=x<=highBound and lowLateralBound<=y<=highLateralBound:
+            # if lowLateralBound<=y<=highLateralBound:
                 region.append(1)
         else:
             region.append(0) 
@@ -130,6 +129,6 @@ if __name__ == "__main__":
     colorbar()
     plt.title('Cusp Crossings')
     plt.xlabel('Start Month')
-    plt.ylabel('60+5y deg inclination')
+    plt.ylabel('55+5y deg inclination')
     plt.show()
 

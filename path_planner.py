@@ -111,7 +111,8 @@ class GridGraph:
         # what I really want to do is get the sun vector in GSE coordinates
 
         # the sun center point is on the end of the x unit vector 
-        sunVector np.array([1,0,0])
+        # sunVector np.array([1,0,0])
+        pass
           
 
     def getObstacles(self, model="grid"):
@@ -135,6 +136,8 @@ class GridGraph:
         return obstacles
 
     def getGoalRegion(self,time,model="tsyganenko"):
+        # input the modified julian time
+        # output the lower bound, upper bound, and lateral bounds in radians
         # this function will return the goal location, based on the cusp location from the tsyganenko model
         # also i guess i'd incorporate that guys rotating dipole model here.
         # the coordinates are cylindrical but you can convert to GSM
@@ -146,8 +149,8 @@ class GridGraph:
         highBound = 0.2849      # s
         
         # threshold 
-        thresh = 2*np.pi/180 # two degrees
-        lateralBound = 2.0      # s
+        thresh = 2*np.pi/180 # two degrees converted to radians
+        lateralBound = 2.0*np.pi/180      # s
 
         
         pi = np.pi              # s
@@ -162,37 +165,44 @@ class GridGraph:
         phi_1 = phi_c0-(a1*psi + a2*psi**2)  # 75 degrees  
         # print("phi_1",phi_1)
         num = np.sqrt(r)
-        den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
+        # den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
+        den = np.sqrt(r + 1/np.sin(phi_1)**2 - 1)
         # print num/den
-        phi_c = num/den
+        t = spacepy.time.Ticktock(time,'MJD')
+        # print("time object,", t)
+        # print("TIME original input", time)
+        phi_c = np.arcsin(num/den) + self.tilt(t)*np.pi/180
         phi_cdeg = 180*phi_c/np.pi # + self.tilt(time)
+        phi_c = phi_c[0]
+        # print("PHI_C", phi_c)
 
+        print("about to start plotting!")
+        plt.plot(time,phi_cdeg)
+        plt.show()
+
+        print("i'm done plotting!")
         # somewhere in here i do the coordinate transformation
         # print("phi_c", phi_c)
         # print("phi_cdeg =,", phi_cdeg)        
         
         # verify these coordinates with the tsyganenko paper
-        Zgsm = np.cos(phi_c).tolist()
-        Xgsm = np.sin(phi_c).tolist()
-        # print("ZGSM", Zgsm)
-        # print("Xgsm", Xgsm)
-        t = spacepy.time.Ticktock(time,'MJD')
-        # print("TIME TIME TIME", t)
-        # print("xgsm length", len(Xgsm))
-        # print("TIME length", len(t))
-        c_gsm = spacepy.coordinates.Coords([[Xgsm, 0, Zgsm]]*len(t), 'GSM', 'car', ticks=t)
-        c_gse = c_gsm.convert('GSE', 'car')
+        Zsm = np.cos(phi_c).tolist()
+        Xsm = np.sin(phi_c).tolist()
+
+        c_sm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]]*len(t), 'SM', 'car', ticks=t)
+        c_gse = c_sm.convert('GSE', 'car')
         
         # need  a way to implement t with this coordinate transform
 
         # the fact that I'm using [0] here means we aren't using the dinural change
         newPhi_c = np.arctan2(c_gse.x, c_gse.z)[0]
-        
+        latVector = np.arctan2(c_gse.y, c_gse.x)[0] 
         # possible dimensions problem here
         # print("newPhi_c", newPhi_c)
         lowbound = newPhi_c - thresh
         highBound = newPhi_c + thresh
-        lateralBound = lateralBound 
+        lowLateralBound = latVector - thresh
+        highLateralBound = latVector + thresh
  
         # plt.plot(r,phi_c)
         # plt.xlabel('distance (r), earth radii')
@@ -206,20 +216,20 @@ class GridGraph:
         # that might be good, or maybe its bad i'm not sure exactly how to
         # check but I was expecting a value around 15 deg
         # i get what I think would be the "right" result if I use earth radii
-        return lowBound, highBound, lateralBound 
+        return lowBound, highBound, lowLateralBound, highLateralBound
     def tilt(self,t):
         # Get dipole tilt for time or range of times
         # :param t: time or times to calculate tilt
         # :type t: list or datetime
         # :returns: positive sunward dipole tilt, in degrees, for each time
         # :rtype: list
-        print("t before,", t)
-        t = spacepy.time.Ticktock(t,'JD')
-        print("important time part", t)
+        # print("t before,", t)
+        t = spacepy.time.Ticktock(t,'MJD')
+        # print("important time part", t)
         c_sm = spacepy.coordinates.Coords([[0, 0, 1.0]] * len(t), 'SM', 'car',
                                           ticks=t)
         c_gsm = c_sm.convert('GSM', 'car')
-        # c_gsm = c_sm.convert('GSE', 'car')
+        c_gse = c_sm.convert('GSE', 'car')
 
         return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
  
