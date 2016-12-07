@@ -36,8 +36,7 @@ def createCma(files):
     # refer to tsyganenko for these coordinate systems
     # the output here is in radians
     angle = np.arctan2(Xgse,Zgse)
-    theta = np.arctan2(Ygse,Xgse) # degrees
-
+    theta = np.arctan2(Ygse,Xgse)
     # but sometimes i print it in degrees
     # print("angle is" , angle * 180 / np.pi)
     # print("theta is", theta)
@@ -58,7 +57,7 @@ def createCma(files):
     # angle = angle[:20]
     # lets get this boundary crossing thing right
     # Okay I think I did it
-    lowBound,highBound,lowLateralBound, highLateralBound = plan.GridGraph().getGoalRegion(t)
+    lowBound,highBound,lowLateralBound,highLateralBound = plan.GridGraph().getGoalRegion(t)
     # lowBound = 0.2151/2
     # highBound = 0.2849/2
     # lateralBound = 5.0/2
@@ -71,7 +70,7 @@ def createCma(files):
         # the biggest thing is a modification of these thresholds
         if lowBound<=x<=highBound:
             # we can add in the other dimension right here
-            if lowLateralBound<=y<= highLateralBound:
+            if lowLateralBound<=y<=highLateralBound:
                 region.append(1)
         else:
             region.append(0) 
