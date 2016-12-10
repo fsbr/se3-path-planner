@@ -191,12 +191,24 @@ class GridGraph:
         # print("phi_cdeg =,", phi_cdeg)        
         
         # verify these coordinates with the tsyganenko paper
-        Zsm = np.cos(phi_c).tolist()
-        Xsm = np.sin(phi_c).tolist()
+        Zsm = np.cos(phi_c)
+        Xsm = np.sin(phi_c)
+        print("zsm", Zsm)
 
-        c_sm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]]*len(t), 'SM', 'car', ticks=t)
-        c_gsm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]]*len(t), 'GSM', 'car', ticks=t)
-        plt.plot(time, np.arctan2(c_gsm.x, c_gsm.z))
+        c_sm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'SM', 'car', ticks=t)
+        c_gsm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'GSM', 'car', ticks=t)
+        c_gse = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'GSE', 'car', ticks=t)
+        print("shape of xgse", c_gse.x.shape)
+        print("shape of zgse", c_gse.z.shape)
+        xgse = np.asarray(c_gse.x).tolist()
+        zgse = np.asarray(c_gse.z).tolist()
+        # print("type of gse coordinate vector", type(c_gse.x))
+        # print("gse coordinate vector", xgse)
+    
+        print('gsex', c_gse.x)
+        print('gsez', c_gse.z)
+        phi = np.arctan2(c_gse.x[0], c_gse.z[0]) 
+        plt.plot(time, phi)
         plt.show()
         
         print("i'm done plotting!")
