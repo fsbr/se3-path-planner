@@ -6,6 +6,7 @@ import numpy as np
 import itertools as it
 import path_planner as plan
 pathName = '../../data-se3-path-planner/cherylData/'
+pathName1 = '../../data-se3-path-planner/yearData/'
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 inclinations = ['55', '60', '65', '70', '75', '80', '85', '90']
 inclinations = inclinations[::-1] # reverses the inclinations 
@@ -31,12 +32,15 @@ def createCma(files):
     t = df['DefaultSC.A1ModJulian']
     # print(t.tail())
     t = t.tolist()
+    t = [t_index + 29999.5 for t_index in t]
+    # print("hopefully something close to the real time", t)
    #  print("type of t", type(t.tolist()))
 
     # refer to tsyganenko for these coordinate systems
     # the output here is in radians
     angle = np.arctan2(Xgse,Zgse)
     theta = np.arctan2(Ygse,Xgse)
+    print("type angle,", type(angle))
     # but sometimes i print it in degrees
     # print("angle is" , angle * 180 / np.pi)
     # print("theta is", theta)
@@ -58,6 +62,20 @@ def createCma(files):
     # lets get this boundary crossing thing right
     # Okay I think I did it
     lowBound,highBound,lowLateralBound,highLateralBound = plan.GridGraph().getGoalRegion(t)
+    print("type of llb", lowLateralBound)
+    print("type of lb", lowBound)
+    print("type of hb", highBound)
+    print("type of llb", lowLateralBound)
+    print("type of hlb", highLateralBound)
+    # lowBound = np.asarray(lowBound).tolist()
+    # highBound = np.asarray(highBound).tolist()
+    # lowLateralBound = np.asarray(lowLateralBound).tolist()
+    # highLateralBound = np.asarray(highLateralBound).tolist()
+    # print("lowbound hadhasdf", len(lowBound))
+    # print("lowbound", lowBound)
+    # print("highBound", highBound)
+    # print("lowLateralBound", lowLateralBound)
+    # print("highLateralbound", highLateralBound)
     # lowBound = 0.2151/2
     # highBound = 0.2849/2
     # lateralBound = 5.0/2
@@ -65,12 +83,14 @@ def createCma(files):
 
     # implement the tsyganenko function and dipole tilt for dynamic changing
     # of the cusp location
-    for x,y in zip(angle, theta):
-        
+    # for x,y,lb,ub,llb,hlb in zip(angle, theta, lowBound, highBound, lowLateralBound, highLateralBound):
+    for x,y,lb,hb,llb,hlb in zip(angle,theta,lowBound,highBound,lowLateralBound,highLateralBound):
+         
         # the biggest thing is a modification of these thresholds
-        if lowBound<=x<=highBound and lowLateralBound<=y<=highLateralBound:
+        # if lowBound<=x<=highBound and lowLateralBound<=y<=highLateralBound:
+        if lb<=x<=hb and llb<=y<=hlb:
             # if lowLateralBound<=y<=highLateralBound:
-                region.append(1)
+            region.append(1)
         else:
             region.append(0) 
 
@@ -98,6 +118,8 @@ cma2 =[]
 # the fact that you can call a function in a list comprehension is the number one reason
 # why i'm going to stick with python
 cma2  =[[createCma(pathName+month+inclination+'.txt') for month in months ] for inclination in inclinations] 
+# cma2 = [[createCma(pathName1+'test4.txt')]]
+print("cma2", cma2)
 
 if __name__ == "__main__":
 

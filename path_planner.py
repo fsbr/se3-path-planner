@@ -144,6 +144,10 @@ class GridGraph:
         
         # eventually needs to take in the time as well
 
+
+        # accounting for GMAT offset
+        # time = [t + 29999.5 for t in time]
+        print("new time vector")
         # legacy "test" outputs use to test function 
         lowBound = 0.2151       # s
         highBound = 0.2849      # s
@@ -167,66 +171,95 @@ class GridGraph:
         phi_1 = phi_c0-(a1*psi + a2*psi**2)  # 75 degrees  
         # print("phi_1",phi_1)
         num = np.sqrt(r)
+
+        # alternate form due to "handwriting"
         # den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
-        den = np.sqrt(r + 1/np.sin(phi_1)**2 - 1)
+        den = np.sqrt(r + 1/np.arcsin(phi_1)**2 - 1)
         # print num/den
         t = spacepy.time.Ticktock(time,'MJD')
-        # print("time object,", t)
+        # print("time object,", t.UTC)
         # print("TIME original input", time)
 
 
         ### SOMETHING IS WRONG IN TSYGANENKO
+        # phi_c gets made into a vector here
+        # phi_c is in the solar magnetic coordinates
         phi_c = np.arcsin(num/den) + self.tilt(t)*np.pi/180
         phi_cdeg = 180*phi_c/np.pi # + self.tilt(time)
         # phi_c = phi_c[0]
-        # print("PHI_C", phi_c)
+        print("PHI_C", phi_c)
+        print("phi_cdeg", phi_cdeg)
 
-        print("about to start plotting!")
-        # c_gse = i
-        # plt.plot(time,phi_cdeg)
-        # plt.show()
-
-        # somewhere in here i do the coordinate transformation
-        # print("phi_c", phi_c)
-        # print("phi_cdeg =,", phi_cdeg)        
-        
         # verify these coordinates with the tsyganenko paper
         Zsm = np.cos(phi_c)
         Xsm = np.sin(phi_c)
+        Ysm = [0]*len(Xsm) 
         print("zsm", Zsm)
+        # change the dimensions of the coordinate vector
+        # there's probably a nice way to do that with .shape
+        print("about to try coordinate dimension change")
+        coordinates_sm = [[i,j,k] for i,j,k in zip(Xsm, Ysm, Zsm)]
+        # print("final coordinates", coordinates_sm)
+        # c_sm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'SM', 'car', ticks=t)
+        # c_gsm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'GSM', 'car', ticks=t)
+        c_gse = spacepy.coordinates.Coords(coordinates_sm, 'SM', 'car', ticks=t)
+        # print("END FOR NOW", [[Xsm, [0 for elements in t], Zsm]])
+        c_gse = c_gse.convert('GSE', 'car')
+        c_gsm = c_gse.convert('GSM', 'car')
+        c_sm = c_gse.convert('SM', 'car')
 
-        c_sm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'SM', 'car', ticks=t)
-        c_gsm = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'GSM', 'car', ticks=t)
-        c_gse = spacepy.coordinates.Coords([[Xsm, 0, Zsm]], 'GSE', 'car', ticks=t)
-        print("shape of xgse", c_gse.x.shape)
-        print("shape of zgse", c_gse.z.shape)
+        print c_gse[0]
+        print c_gsm[0]
+        # print("shape of xgse", c_gse.x.shape)
+        # print("shape of zgse", c_gse.z.shape)
         xgse = np.asarray(c_gse.x).tolist()
+        ygse = np.asarray(c_gse.y).tolist()
         zgse = np.asarray(c_gse.z).tolist()
+
+        xgsm = np.asarray(c_gse.x).tolist()
+        ygsm = np.asarray(c_gse.y).tolist()
+        zgsm = np.asarray(c_gse.z).tolist()
         # print("type of gse coordinate vector", type(c_gse.x))
         # print("gse coordinate vector", xgse)
     
-        print('gsex', c_gse.x)
-        print('gsez', c_gse.z)
-        phi = np.arctan2(c_gse.x[0], c_gse.z[0]) 
-        plt.plot(time, phi)
-        plt.show()
+        print('gsex', c_gse.x.shape)
+        print('gsey', c_gse.y.shape)
+        print('gsez', c_gse.z.shape)
+        print('time', len(time))
+
+        # originally i used only a single x and z value here but now
+        # i'll try the vector version
+        phi = np.arctan2(xgse, zgse) 
+        phigsm = np.arctan2(xgsm, zgsm)
+        
+        theta = np.arctan2(ygse,xgse)
+        #plt.plot(c_gse.x,c_gse.z)
+        # plt.plot(c_gse.z, c_gse.x)
+        # plt.show()
         
         print("i'm done plotting!")
-        c_gse = c_sm.convert('GSE', 'car')
         
         # need  a way to implement t with this coordinate transform
 
         # the fact that I'm using [0] here means we aren't using the dinural change
-        newPhi_c = np.arctan2(c_gse.x, c_gse.z)[0]
-        latVector = np.arctan2(c_gse.y, c_gse.x)[0] 
+        # this needs to change the boundary every time step and it's not
+        # newPhi_c = np.array(np.arctan2(c_gse.x, c_gse.z))
+        newPhi_c = np.array(np.arctan2(c_gse.z, c_gse.x))
+        latVector = np.array(np.arctan2(c_gse.y, c_gse.x))
+        print("type of phi_c", type(np.array(newPhi_c)))
+        print("type of latevector", type(latVector))
         # possible dimensions problem here
         # print("newPhi_c", newPhi_c)
-        lowbound = newPhi_c - thresh
+        lowBound = newPhi_c - thresh
         highBound = newPhi_c + thresh
+        # lowbound = phi - thresh
+        # highbound = phi + thresh
+        # lowLateralBound = theta - thresh
+        # highLateralBound = theta + thresh
         lowLateralBound = latVector - thresh
         highLateralBound = latVector + thresh
  
-        # plt.plot(r,phi_c)
+        # plt.plot(r,phi)
         # plt.xlabel('distance (r), earth radii')
         # plt.title('Cusp Geometric Properties')
         # plt.ylabel('zenith angle phi_c')
@@ -254,7 +287,7 @@ class GridGraph:
         c_gse = c_sm.convert('GSE', 'car')
         
         # j niehof originally used c_gsm
-        return np.arctan2(c_gsm.x, c_gsm.z)
+        return np.arctan2(c_sm.x, c_sm.z)
  
 
     def testTilt(self):
