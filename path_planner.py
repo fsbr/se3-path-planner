@@ -33,6 +33,8 @@ class GridGraph:
         self.width = width
         self.height = height
         
+        # cost for dijkstra/a*
+        self.weights = {} 
         # this also works with range argument (-maxx, maxx), (-maxy,maxy) etc.
         for x in range(self.width):
             for y in range(self.height):
@@ -43,6 +45,10 @@ class GridGraph:
         self.obstacles = []
         self.obstacles = self.getObstacles()
         print("self.obstacles", self.obstacles)
+        
+        # trying to apply uniform cost 1 to the grid
+        self.weights = {w: 1 for w in self.all_nodes}
+        self.weights = {w: 50 for w in self.obstacles}
     def in_bounds(self, id):
         (x,y) = id
         return 0<=x < self.width and 0 <= y < self.height
@@ -74,9 +80,12 @@ class GridGraph:
 
     def reconstruct_path(self, came_from, start, goal):
         current = goal
+        print("current", current)
         path = [current]
+        print("path", current)
         while current != start:
             current = came_from[current]
+            print("current", current)
             path.append(current)
         path.append(start) # optional
         path.reverse() # optional
@@ -105,7 +114,29 @@ class GridGraph:
         pass
     def a_star_search(self, start, goal):
         # i'll add this in later if needed
-        pass
+
+        frontier = PriorityQueue()
+        frontier.put(start, 0)
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+        
+        while not frontier.empty():
+            current = frontier.get()
+            
+            if current == goal:
+                break
+            
+            for next in self.neighbors2(current):
+                new_cost = cost_so_far[current] + self.cost(current, next)
+                if next not in cost_so_far or new_cost < cost_so_far[next]:
+                    cost_so_far[next] = new_cost
+                    priority = new_cost + heuristic(goal, next)
+                    frontier.put(next, priority)
+                    came_from[next] = current
+            
+            return came_from, cost_so_far
     
     def sunLocation(threshold):
         # the idea is that this defines an angular position of the sun. 
@@ -323,6 +354,15 @@ class GridGraph:
             for x in range(self.max_x):
                 print("#")
             print("\n")
+    
+    def heuristic(a, b):
+        # implements the manhattan distance
+        (x1, y1) = a
+        (x2, y2) = b
+        return abs(x1 - x2) + abs(y1 - y2)
+
+    def cost(self, from_node, to_node):
+        return self.weights.get(to_node,1)
 
 
 if __name__ == "__main__":
@@ -336,22 +376,27 @@ if __name__ == "__main__":
     s = (0,0)
     # e = (195,95) 
     e = g.simpleGoalRegion()
+    print("goal region", e)
     parents = g.breadth_first_search(s,e)
+    # parents1, cost = g.a_star_search(s,e)
     # draw_grid(g, width=3, point_to=parents, start=s, goal=e)
     path = g.reconstruct_path(parents, s, e)
     draw_grid(g, width=2, path=reconstruct_path(parents, s, e))
-    print("PATH", path)
+    # print("PATH", path)
     # print("X equatls toooooo", x)
     x = [path[i][0] for i in range(0,len(path))]
     y = [path[i][1] for i in range(0,len(path))]
-    print("\n\n\n PATH \n\n\n", x)
+    # print("\n\n\n PATH \n\n\n", x)
     # y = [path[1][:]]
     
     obs = g.getObstacles()
     xo = [obs[i][0] for i in range(0,len(obs))]
     yo = [obs[i][1] for i in range(0,len(obs))]
     plt.plot(x, y)
-    plt.plot(xo,yo)
+    plt.scatter(xo,yo)
+    plt.xlabel('GSE longitude (deg)')
+    plt.ylabel('GSE latitude (deg)')
+    plt.title('Sample Path in GSE path planner')
     plt.show()
     # GridGraph(20,10).testTilt()
 
@@ -359,12 +404,8 @@ if __name__ == "__main__":
     # print(GridGraph().tilt(datetime.datetime(2016, 3, 3)))
     # print(GridGraph().tilt([datetime.datetime(2016, 3, 1) + datetime.timedelta(days=i) for i in range(7)]))
 
-
     # YUMMMMM
     # basically to get my code to work, i'll just make it take in a julian time instead of a datetime object
-
-
-
 
     #GridGraph()
     # some of the unanswered questions here are how do we relate translation in (x,y,z)_GSE
