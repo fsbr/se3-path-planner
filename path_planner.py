@@ -341,6 +341,18 @@ if __name__ == "__main__":
     path = g.reconstruct_path(parents, s, e)
     draw_grid(g, width=2, path=reconstruct_path(parents, s, e))
     print("PATH", path)
+    # print("X equatls toooooo", x)
+    x = [path[i][0] for i in range(0,len(path))]
+    y = [path[i][1] for i in range(0,len(path))]
+    print("\n\n\n PATH \n\n\n", x)
+    # y = [path[1][:]]
+    
+    obs = g.getObstacles()
+    xo = [obs[i][0] for i in range(0,len(obs))]
+    yo = [obs[i][1] for i in range(0,len(obs))]
+    plt.plot(x, y)
+    plt.plot(xo,yo)
+    plt.show()
     # GridGraph(20,10).testTilt()
 
     # print(GridGraph().tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
