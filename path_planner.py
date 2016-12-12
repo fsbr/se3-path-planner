@@ -9,7 +9,7 @@ import numpy as np
 import spacepy.coordinates
 import spacepy.time
 import matplotlib.pyplot as plt
-
+from implementation import *
 
 class Queue:
     def __init__(self):
@@ -26,25 +26,26 @@ class Queue:
 class GridGraph:
     # builds a graph of a rectangular grid
     # later i'll worry about labeling the coordinates
-    def __init__(self,max_x=10,max_y=10):
+    def __init__(self,width=10,height=10):
         self.all_nodes = []
 
         # define total area
-        self.max_x = max_x
-        self.max_y = max_y
+        self.width = width
+        self.height = height
         
         # this also works with range argument (-maxx, maxx), (-maxy,maxy) etc.
-        for x in range(self.max_x):
-            for y in range(self.max_y):
+        for x in range(self.width):
+            for y in range(self.height):
                 self.all_nodes.append((x,y))
         self.all_nodes = tuple(self.all_nodes)
         # define obstacles
-        self.obstacles = [(2,0), (3,0),(4,0),(2,1),(3,1),(4,1),(2,2),(3,2),(4,2),(14,11)]
-        # self.obstacles = []
-        # self.obstacles = self.getObstacles()
+        # self.obstacles = [(2,0), (3,0),(4,0),(2,1),(3,1),(4,1),(2,2),(3,2),(4,2),(14,11)]
+        self.obstacles = []
+        self.obstacles = self.getObstacles()
+        print("self.obstacles", self.obstacles)
     def in_bounds(self, id):
         (x,y) = id
-        return 0<=x < self.max_x and 0 <= y < self.max_y
+        return 0<=x < self.width and 0 <= y < self.height
 
     def passable(self, id):
         # true if the id isn't an obstacle
@@ -120,17 +121,21 @@ class GridGraph:
         # this corresponds to the location of the sun.
         # generates obstacles of a certain shape 
         obstacles = [] 
-        startPoint = (2,2)
+
+        # the sun is always on the x axis
+        startPoint = (self.width/2,self.height/2)
+        print("self.width/2", self.width/2)
+        print("self.height/2", self.height/2)
         start_x = startPoint[0]
         start_y = startPoint[1]
         # print("startx", start_x)
         # print("starty", start_y)
         # make a 10x10 grid
-        length_x = 10 
-        length_y = 15
-        for x in range(0,length_x):
-            for y in range(0,length_y):
-                obstacles.append([start_x+x, start_y+y])
+        length_x = 25 
+        length_y = 25
+        for x in range(-length_x,length_x):
+            for y in range(-length_y,length_y):
+                obstacles.append((start_x+x, start_y+y))
         obstacles = tuple(obstacles)
         # print("obstacles list,",obstacles)
         return obstacles
@@ -208,8 +213,6 @@ class GridGraph:
         c_gsm = c_gse.convert('GSM', 'car')
         c_sm = c_gse.convert('SM', 'car')
 
-        print c_gse[0]
-        print c_gsm[0]
         # print("shape of xgse", c_gse.x.shape)
         # print("shape of zgse", c_gse.z.shape)
         xgse = np.asarray(c_gse.x).tolist()
@@ -272,6 +275,14 @@ class GridGraph:
         # check but I was expecting a value around 15 deg
         # i get what I think would be the "right" result if I use earth radii
         return lowBound, highBound, lowLateralBound, highLateralBound
+
+    def simpleGoalRegion(self):
+        # return theta = 0, phi = 78 degrees latitude
+        # need to include offsets because the coordinate system here is only
+        # positive integers
+        theta =0
+        phi = 78
+        return (self.width/2,self.height/2 + phi)
     def tilt(self,t):
         # Get dipole tilt for time or range of times
         # :param t: time or times to calculate tilt
@@ -305,12 +316,31 @@ class GridGraph:
         # note depending on how big the grid is, using bfs is very slow
         path = self.reconstruct_path(parents,(0,0),(15,12))
         print("path",path)
+    
+    def draw_graph(self):
+        # trying to draw the grid
+        for y in range(self.max_y):
+            for x in range(self.max_x):
+                print("#")
+            print("\n")
 
 
 if __name__ == "__main__":
     
     # need to specify the UNITS for this thing
-    GridGraph(60,40).simpleTest()
+    g = GridGraph(180,180)
+     
+    # g.obstacles = [(0,0),(0,1), (1,1), (1,0)]
+    # draw_grid(g)
+    # s = (173,83)
+    s = (0,0)
+    # e = (195,95) 
+    e = g.simpleGoalRegion()
+    parents = g.breadth_first_search(s,e)
+    # draw_grid(g, width=3, point_to=parents, start=s, goal=e)
+    path = g.reconstruct_path(parents, s, e)
+    draw_grid(g, width=2, path=reconstruct_path(parents, s, e))
+    print("PATH", path)
     # GridGraph(20,10).testTilt()
 
     # print(GridGraph().tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
