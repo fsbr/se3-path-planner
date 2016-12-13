@@ -67,7 +67,7 @@ DIAGRAM1_WALLS = [from_id_width(id, width=30) for id in [21,22,51,52,81,82,93,94
 class SquareGrid:
     def __init__(self, width, height):
         self.width = width
-        self.height = height
+        self.height = height 
         self.walls = []
     
     def in_bounds(self, id):

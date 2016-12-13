@@ -2,14 +2,28 @@
 # like for now, I can just have a grid -n to n, or 0,n or something.
 
 #building queue class from http://www.redblobgames.com/pathfinding/a-star/implementation.html
+import time
 import collections
 import datetime
-
+import heapq
 import numpy as np
 import spacepy.coordinates
 import spacepy.time
 import matplotlib.pyplot as plt
-from implementation import *
+# from implementation import *
+import timeit as ti
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+    
+    def empty(self):
+        return len(self.elements) == 0
+    
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+    
+    def get(self):
+        return heapq.heappop(self.elements)[1]
 
 class Queue:
     def __init__(self):
@@ -47,8 +61,8 @@ class GridGraph:
         print("self.obstacles", self.obstacles)
         
         # trying to apply uniform cost 1 to the grid
-        self.weights = {w: 1 for w in self.all_nodes}
-        self.weights = {w: 50 for w in self.obstacles}
+        # self.weights = {w: 1 for w in self.all_nodes}
+        # self.weights = {w: 50 for w in self.obstacles}
     def in_bounds(self, id):
         (x,y) = id
         return 0<=x < self.width and 0 <= y < self.height
@@ -57,11 +71,32 @@ class GridGraph:
         # true if the id isn't an obstacle
         return id not in self.obstacles
 
-    def neighbors2(self, id):
+    def neighbors2(self, id, connectivity, reverse):
         # the main difference between this one and the original one is that
         # the configuration space coordinates are immutable this way
         (x,y) = id
-        results = [(x+1, y),(x+1, y+1), (x, y+1),(x-1, y), (x-1, y+1), (x-1, y-1), (x, y-1), (x+1,y-1)]
+
+        # different forms of connectivity 8
+        # results = [(x+1, y),(x+1, y+1), (x, y+1),(x-1, y), (x-1, y+1), (x-1, y-1), (x, y-1), (x+1,y-1)]
+        # results = [(x+1,y), (x+1,y+1), (x,y+1), (x-1,y+1), (x-1,y),(x-1,y-1), (x,y-1), (x+1,y-1)]
+
+        # very important to search the cardinal directionsi first
+
+        if connectivity == 8:
+            results = [(x+1,y), (x-1,y), (x,y+1), (x,y-1), (x+1,y+1), (x-1,y+1), (x-1,y-1), (x+1,y-1)]
+        # different forms of connectivity 4        
+        elif connectivity == 4:
+            results = [(x+1,y), (x-1,y), (x,y+1),(x,y-1)]
+        else:
+            print("invalid connectivity")
+
+        if reverse==1:
+            if (x+y) % 2 == 0: 
+                results.reverse()
+        elif reverse ==0:
+            pass
+        else:
+            print("invalid reversal state")
         results = filter(self.in_bounds,results)
         results = filter(self.passable, results)
         return results
@@ -91,7 +126,7 @@ class GridGraph:
         path.reverse() # optional
         return path
 
-    def breadth_first_search(self, start, goal):
+    def breadth_first_search(self, start, goal,connectivity=4, reverse=0):
         frontier = Queue()
         frontier.put(start)
         came_from = {}
@@ -103,7 +138,7 @@ class GridGraph:
             if current == goal:
                 break
 
-            for next in self.neighbors2(current):
+            for next in self.neighbors2(current,connectivity, reverse):
                 if next not in came_from:
                     frontier.put(next)
                     came_from[next] = current
@@ -112,7 +147,7 @@ class GridGraph:
     def dijkstras_search(self,start,goal):
         # placeholder function for dijkstras_search
         pass
-    def a_star_search(self, start, goal):
+    def a_star_search(self, start, goal,connectivity=4, reverse=1):
         # i'll add this in later if needed
 
         frontier = PriorityQueue()
@@ -124,15 +159,20 @@ class GridGraph:
         
         while not frontier.empty():
             current = frontier.get()
+            print("current is", current)
             
             if current == goal:
+                print("entered break")
                 break
             
-            for next in self.neighbors2(current):
-                new_cost = cost_so_far[current] + self.cost(current, next)
+            for next in self.neighbors2(current,connectivity,reverse):
+                # im hoping to indicate uniform cost 1 by just saying its 1
+                new_cost = cost_so_far[current] +  self.cost(current, next)
+                print("next is ,",next)
                 if next not in cost_so_far or new_cost < cost_so_far[next]:
                     cost_so_far[next] = new_cost
-                    priority = new_cost + heuristic(goal, next)
+                    priority = new_cost + g.heuristic(goal, next)
+                    print("priority")
                     frontier.put(next, priority)
                     came_from[next] = current
             
@@ -162,8 +202,8 @@ class GridGraph:
         # print("startx", start_x)
         # print("starty", start_y)
         # make a 10x10 grid
-        length_x = 25 
-        length_y = 25
+        length_x = 10 
+        length_y = 10
         for x in range(-length_x,length_x):
             for y in range(-length_y,length_y):
                 obstacles.append((start_x+x, start_y+y))
@@ -313,7 +353,7 @@ class GridGraph:
         # positive integers
         theta =0
         phi = 78
-        return (self.width/2,self.height/2 + phi)
+        return (self.width/2,phi)
     def tilt(self,t):
         # Get dipole tilt for time or range of times
         # :param t: time or times to calculate tilt
@@ -355,50 +395,95 @@ class GridGraph:
                 print("#")
             print("\n")
     
-    def heuristic(a, b):
+    def heuristic(self,a, b):
         # implements the manhattan distance
         (x1, y1) = a
         (x2, y2) = b
         return abs(x1 - x2) + abs(y1 - y2)
 
+# def timing(f):
+#     print("used timing function")
+#     def wrap(*args):
+#         time1 = time.time()
+#         ret = f(*args)
+#         time2 = time.time()
+#         print('%s function took %0.3f ms' % (f.__name__, (time2-time1)*1000.0))
+#         return ret
+#     return wrap
+class GridWithWeights(GridGraph):
+    def __init__(self, width, height):
+        super().__init__(width, height)
+    
+        self.weights = {}
+    
     def cost(self, from_node, to_node):
-        return self.weights.get(to_node,1)
-
+        return self.weights.get(to_node, 1)
 
 if __name__ == "__main__":
-    
     # need to specify the UNITS for this thing
-    g = GridGraph(180,180)
+    # g = GridGraph(180,90)
+    g = GridWithWeights(180,90)
      
     # g.obstacles = [(0,0),(0,1), (1,1), (1,0)]
     # draw_grid(g)
     # s = (173,83)
-    s = (0,0)
     # e = (195,95) 
     e = g.simpleGoalRegion()
     print("goal region", e)
-    parents = g.breadth_first_search(s,e)
-    # parents1, cost = g.a_star_search(s,e)
-    # draw_grid(g, width=3, point_to=parents, start=s, goal=e)
-    path = g.reconstruct_path(parents, s, e)
-    draw_grid(g, width=2, path=reconstruct_path(parents, s, e))
-    # print("PATH", path)
-    # print("X equatls toooooo", x)
-    x = [path[i][0] for i in range(0,len(path))]
-    y = [path[i][1] for i in range(0,len(path))]
-    # print("\n\n\n PATH \n\n\n", x)
-    # y = [path[1][:]]
     
-    obs = g.getObstacles()
-    xo = [obs[i][0] for i in range(0,len(obs))]
-    yo = [obs[i][1] for i in range(0,len(obs))]
-    plt.plot(x, y)
+    # timerVals = []
+    # for i in range(0,10):
+    #     time1 = time.time()
+    #     g.breadth_first_search(s,e)
+    #     time2 = time.time()
+    #     total_time = time2-time1
+    #     print('function took %0.3f ms' % ((time2-time1)*1000.0))
+    #     timerVals.append(total_time)
+    # print("timer values = ", timervals)
+    # print("mean time was", sum(timerVals)/len(timerVals))
+    conn = [4,8]
+    reverse = [0,1]
+    xoff  = [5,45,90,135] 
+    # endOffs = [-1,1,-5,5, -7,7,-10,10]
+    endOffs = [0]
+    for xoffs in endOffs:
+        for c in conn:
+            for r in reverse:
+                
+                # e = (e[0], 78+xoffs)
+                # hard coding for a*
+                e = (90,78)
+                s = (90,0)
+                # parents = g.breadth_first_search(s,e,c,r)
+                parents, cost = g.a_star_search(s,e)
+                # draw_grid(g, width=3, point_to=parents, start=s, goal=e)
+                path = g.reconstruct_path(parents, s, e)
+                # draw_grid(g, width=2, path=reconstruct_path(parents, s, e))
+                # print("PATH", path)
+                # print("X equatls toooooo", x)
+
+                x = [path[i][0] for i in range(0,len(path))]
+                y = [path[i][1] for i in range(0,len(path))]
+                
+                obs = g.getObstacles()
+                xo = [obs[i][0] for i in range(0,len(obs))]
+                yo = [obs[i][1] for i in range(0,len(obs))]
+                plt.plot(x, y)
+
+
     plt.scatter(xo,yo)
-    plt.xlabel('GSE longitude (deg)')
-    plt.ylabel('GSE latitude (deg)')
-    plt.title('Sample Path in GSE path planner')
+    plt.xlabel('Equirectangular longitude (deg)')
+    plt.ylabel('Equirectangular latitude (deg)')
+    plt.title('BFS Paths for Varying Goal Location')
+    plt.xlim([-180,180])
+    plt.ylim([-90,90])
     plt.show()
+
+    print("lenght of the path", len(path))
+
+    ### the above i need
     # GridGraph(20,10).testTilt()
+
 
     # print(GridGraph().tilt(spacepy.time.tickrange('2008-03-08T10:00:00', '2008-03-08T22:00:00', datetime.timedelta(hours=1))))
     # print(GridGraph().tilt(datetime.datetime(2016, 3, 3)))
