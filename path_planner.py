@@ -47,8 +47,6 @@ class GridGraph:
         self.width = width
         self.height = height
         
-        # cost for dijkstra/a*
-        self.weights = {} 
         # this also works with range argument (-maxx, maxx), (-maxy,maxy) etc.
         for x in range(self.width):
             for y in range(self.height):
@@ -120,7 +118,7 @@ class GridGraph:
         print("path", current)
         while current != start:
             current = came_from[current]
-            print("current", current)
+            #print("current", current)
             path.append(current)
         path.append(start) # optional
         path.reverse() # optional
@@ -144,40 +142,24 @@ class GridGraph:
                     came_from[next] = current
 
         return came_from
-    def dijkstras_search(self,start,goal):
-        # placeholder function for dijkstras_search
-        pass
-    def a_star_search(self, start, goal,connectivity=4, reverse=1):
-        # i'll add this in later if needed
-
+    def dijkstras_search(self,start,goal,connectivity=8,reverse=0):
         frontier = PriorityQueue()
         frontier.put(start, 0)
         came_from = {}
-        cost_so_far = {}
         came_from[start] = None
-        cost_so_far[start] = 0
-        
+
         while not frontier.empty():
-            current = frontier.get()
-            print("current is", current)
-            
-            if current == goal:
-                print("entered break")
-                break
-            
-            for next in self.neighbors2(current,connectivity,reverse):
-                # im hoping to indicate uniform cost 1 by just saying its 1
-                new_cost = cost_so_far[current] +  self.cost(current, next)
-                print("next is ,",next)
-                if next not in cost_so_far or new_cost < cost_so_far[next]:
-                    cost_so_far[next] = new_cost
-                    priority = new_cost + g.heuristic(goal, next)
-                    print("priority")
-                    frontier.put(next, priority)
-                    came_from[next] = current
-            
-            return came_from, cost_so_far
-    
+           current = frontier.get()
+
+           if current == goal:
+              break
+           
+           for next in self.neighbors2(current, connectivity, reverse):
+              if next not in came_from:
+                 priority = self.heuristic(goal, next)
+                 frontier.put(next, priority)
+                 came_from[next] = current
+        return came_from
     def sunLocation(threshold):
         # the idea is that this defines an angular position of the sun. 
         # what I really want to do is get the sun vector in GSE coordinates
@@ -418,12 +400,54 @@ class GridWithWeights(GridGraph):
     
     def cost(self, from_node, to_node):
         return self.weights.get(to_node, 1)
+    def a_star_search(self, start, goal,connectivity=4, reverse=1):
+        # i'll add this in later if needed
+
+        frontier = PriorityQueue()
+        frontier.put(start, 0)
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+        
+        while not frontier.empty():
+            # print("is frontier empty???,", frontier.empty())
+            current = frontier.get()
+            # print("current is", current)
+            
+            if current == goal:
+                # print("current == goal", current==goal)
+                break
+            
+            for next in self.neighbors2(current,connectivity,reverse):
+                # im hoping to indicate uniform cost 1 by just saying its 1
+                new_cost = cost_so_far[current] +  self.cost(current, next)
+                # print("next is ,",new_cost)
+                if next not in cost_so_far or new_cost < cost_so_far[next]:
+                    # print("dont give up")
+                    cost_so_far[next] = new_cost
+                    priority = new_cost + self.heuristic(goal, next)
+                    
+                    # print("priority",self.heuristic(goal,next))
+                    frontier.put(next, priority)
+                    came_from[next] = current
+            # print("came from ", came_from)
+            # print("ccost so far ", cost_so_far)
+        # print("frontier", frontier.empty())
+        return came_from, cost_so_far
 
 if __name__ == "__main__":
     # need to specify the UNITS for this thing
     # g = GridGraph(180,90)
     g = GridWithWeights(180,90)
-     
+    g.weights = {loc: 5 for loc in [(3, 4), (3, 5), (4, 1), (4, 2),
+                                       (4, 3), (4, 4), (4, 5), (4, 6), 
+                                       (4, 7), (4, 8), (5, 1), (5, 2),
+                                       (5, 3), (5, 4), (5, 5), (5, 6), 
+                                       (5, 7), (5, 8), (6, 2), (6, 3), 
+                                       (6, 4), (6, 5), (6, 6), (6, 7), 
+                                       (7, 3), (7, 4), (7, 5)]}
+
     # g.obstacles = [(0,0),(0,1), (1,1), (1,0)]
     # draw_grid(g)
     # s = (173,83)
@@ -444,25 +468,28 @@ if __name__ == "__main__":
     conn = [4,8]
     reverse = [0,1]
     xoff  = [5,45,90,135] 
-    # endOffs = [-1,1,-5,5, -7,7,-10,10]
-    endOffs = [0]
+    endOffs = [-1,1,-5,5, -7,7,-10,10]
+    # endOffs = [0]
+    # e1 = (90,78)
+    # s1 = (90,0)
+    # parents, costs = g.a_star_search(e1,s1) 
     for xoffs in endOffs:
         for c in conn:
             for r in reverse:
-                
-                # e = (e[0], 78+xoffs)
-                # hard coding for a*
-                e = (90,78)
+               
+                e = (90, 78+xoffs)
+               # hard coding for a*
+                # e = (90,78)
                 s = (90,0)
                 # parents = g.breadth_first_search(s,e,c,r)
-                parents, cost = g.a_star_search(s,e)
+                parents, costs = g.a_star_search(s,e,c,r)
+                # parents = g.dijkstras_search(s,e,c,r)
                 # draw_grid(g, width=3, point_to=parents, start=s, goal=e)
                 path = g.reconstruct_path(parents, s, e)
                 # draw_grid(g, width=2, path=reconstruct_path(parents, s, e))
-                # print("PATH", path)
-                # print("X equatls toooooo", x)
+                print("paTH", path)
 
-                x = [path[i][0] for i in range(0,len(path))]
+                x= [path[i][0] for i in range(0,len(path))]
                 y = [path[i][1] for i in range(0,len(path))]
                 
                 obs = g.getObstacles()
@@ -474,11 +501,10 @@ if __name__ == "__main__":
     plt.scatter(xo,yo)
     plt.xlabel('Equirectangular longitude (deg)')
     plt.ylabel('Equirectangular latitude (deg)')
-    plt.title('BFS Paths for Varying Goal Location')
+    plt.title('A* Paths for Varying Goal Location')
     plt.xlim([-180,180])
     plt.ylim([-90,90])
     plt.show()
-
     print("lenght of the path", len(path))
 
     ### the above i need
