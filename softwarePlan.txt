@@ -1,0 +1,27 @@
+I'll try to outline exactly the things that I need this project to do.
+
+I'd also like to include here the ways that we are going to CHECK and verify
+that those things make sense.
+
+1.  Models the Cusp based on TS96. 
+1c.1.  The check is if we can generate those same plots from the N.Tsyg paper,
+    and if the colormap is similar to the one that brian does.
+1c.2.  If I'm able to plot cones for the cusp that make sense and then plot
+        the orbits that would be nice too.
+1c.3. does the daily/dinural change. 
+
+2.  Models the Sun as a static circular obstacles
+2c.  If I plot a circle in the disrcete equirectangular space then I did it.
+
+3.  outputs a vector of so3 coordinates, and converts them to euler angle
+    commandables for the robot
+
+4.  models the desired attitudes via the se3 thing I wrote already
+
+5.  models the simulated attitudes via some control mechanism.
+
+
+TODO:  go into some details for each part.  Write a new document from the POV
+    of the programmer.  Include thigns like function calls, specific IDEAS about
+    the algorithm.  I'm thinking specifically about how we calculate the cusp
+    crossings.
