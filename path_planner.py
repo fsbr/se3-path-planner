@@ -184,15 +184,18 @@ class GridGraph:
         ### SOMETHING IS WRONG IN TSYGANENKO
         # phi_c gets made into a vector here
         # phi_c is in the solar magnetic coordinates
-        phi_c = np.arcsin(num/den) + self.tilt(t)*np.pi/180
+        # phi_c = np.arcsin(num/den) #+ self.tilt(t)*np.pi/180
+        phi_c = np.arcsin(num/den) + 0*self.tilt(t)*np.pi/180
         phi_cdeg = 180*phi_c/np.pi # + self.tilt(time)
         # phi_c = phi_c[0]
         print("PHI_C", phi_c)
         print("phi_cdeg", phi_cdeg)
 
         # verify these coordinates with the tsyganenko paper
-        Zsm = np.cos(phi_c)
-        Xsm = np.sin(phi_c)
+        #Zsm = np.cos(phi_c)
+        Zsm = np.sin(phi_c)
+        #Xsm = np.sin(phi_c)
+        Xsm = np.cos(phi_c)
         Ysm = [0]*len(Xsm) 
         print("zsm", Zsm)
         # change the dimensions of the coordinate vector
@@ -219,6 +222,10 @@ class GridGraph:
         xgsm = np.asarray(c_gse.x).tolist()
         ygsm = np.asarray(c_gse.y).tolist()
         zgsm = np.asarray(c_gse.z).tolist()
+
+        xsm = np.asarray(c_sm.x).tolist()
+        ysm = np.asarray(c_sm.y).tolist()
+        zsm = np.asarray(c_sm.z).tolist()
         # print("type of gse coordinate vector", type(c_gse.x))
         # print("gse coordinate vector", xgse)
     
@@ -229,13 +236,13 @@ class GridGraph:
 
         # originally i used only a single x and z value here but now
         # i'll try the vector version
-        phi = np.arctan2(xgse, zgse) 
+        phi = np.arctan2(xsm, zsm) 
         phigsm = np.arctan2(xgsm, zgsm)
         
         theta = np.arctan2(ygse,xgse)
-        #plt.plot(c_gse.x,c_gse.z)
-        # plt.plot(c_gse.z, c_gse.x)
-        # plt.show()
+        plt.plot(t.UTC,phi)
+        # plt.plot(c_gsm.z, c_gsm.x)
+        plt.show()
         
         print("i'm done plotting!")
         
@@ -245,7 +252,8 @@ class GridGraph:
         # this needs to change the boundary every time step and it's not
         # newPhi_c = np.array(np.arctan2(c_gse.x, c_gse.z))
         newPhi_c = np.array(np.arctan2(c_gse.z, c_gse.x))
-        latVector = np.array(np.arctan2(c_gse.y, c_gse.x))
+        # latVector = np.array(np.arctan2(c_gse.y, c_gse.x))
+        latVector = np.array(np.arctan2(c_gse.x, c_gse.y))
         print("type of phi_c", type(np.array(newPhi_c)))
         print("type of latevector", type(latVector))
         # possible dimensions problem here
