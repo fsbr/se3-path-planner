@@ -24,9 +24,13 @@ yjul55 = df2['DefaultSC.gse.Y'][:1000]
 zjul55 = df2['DefaultSC.gse.Z'][:1000]
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-ax.plot(x80,y80,z80)
-ax.plot(x55,y55,z55)
-ax.plot(xjul55,yjul55,zjul55)
+ax.plot(x80,y80,z80,label='Jan80')
+ax.plot(x55,y55,z55,label='Jan55')
+ax.plot(xjul55,yjul55,zjul55,label='Jul80')
+ax.legend()
+ax.set_xlabel('meters')
+ax.set_ylabel('meters')
+ax.set_zlabel('meters')
 plt.show()
 
 
