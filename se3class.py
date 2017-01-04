@@ -31,7 +31,7 @@ class SpecialEuclidean:
         psiRot = self.R3(self.psi)
 
         # do the matrix multiplication
-        so3 = np.dot(thtRot,np.dot(phiRot,psiRot))
+        so3 = np.dot(phiRot,np.dot(thtRot,psiRot))
         return so3
     def getTranslation(self):
         # builds the translation part of the se3 matrix
