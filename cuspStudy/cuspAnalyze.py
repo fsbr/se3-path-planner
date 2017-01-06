@@ -64,11 +64,11 @@ def createCma(files):
     # lets get this boundary crossing thing right
     # Okay I think I did it
     lowBound,highBound,lowLateralBound,highLateralBound = plan.GridGraph().getGoalRegion(t)
-    print("type of llb", lowLateralBound)
-    print("type of lb", lowBound)
-    print("type of hb", highBound)
-    print("type of llb", lowLateralBound)
-    print("type of hlb", highLateralBound)
+    # print("type of llb", lowLateralBound)
+    # print("type of lb", lowBound)
+    # print("type of hb", highBound)
+    # print("type of llb", lowLateralBound)
+    # print("type of hlb", highLateralBound)
     # lowBound = np.asarray(lowBound).tolist()
     # highBound = np.asarray(highBound).tolist()
     # lowLateralBound = np.asarray(lowLateralBound).tolist()
@@ -121,10 +121,10 @@ cma2 =[]
 # why i'm going to stick with python
 cma2  =[[createCma(pathName+month+inclination+'.txt') for month in months ] for inclination in inclinations] 
 # cma2 = [[createCma(pathName1+'test4.txt')]]
-print("cma2", cma2)
+# print("cma2", cma2)
 
 if __name__ == "__main__":
-    a = 1
+    a = 3
     from pylab import *
     if a ==1:
         cdict = {'red': ((0.0, 0.0, 0.0),
