@@ -15,7 +15,7 @@ def tilt(t):
     c_gsm = c_sm.convert('GSM', 'car')
 
     return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
-
+# whats kinda crazy is that some of the coordinate transformations look ridiculous
 tilts=tilt(spacepy.time.tickrange('2016-01-01T00:00:00', '2017-01-01T00:00:00', datetime.timedelta(hours=24)))
 print("tilts", tilts)
 plt.plot(tilts)

@@ -121,44 +121,20 @@ cma2 =[]
 # why i'm going to stick with python
 cma2  =[[createCma(pathName+month+inclination+'.txt') for month in months ] for inclination in inclinations] 
 # cma2 = [[createCma(pathName1+'test4.txt')]]
-# print("cma2", cma2)
+print("cma2", cma2)
 
 if __name__ == "__main__":
     a = 3
     from pylab import *
-    if a ==1:
-        cdict = {'red': ((0.0, 0.0, 0.0),
-                         (0.5, 1.0, 0.7),
-                         (1.0, 1.0, 1.0)),
-                 'green': ((0.0, 0.0, 0.0),
-                           (0.5, 1.0, 0.0),
-                           (1.0, 1.0, 1.0)),
-                 'blue': ((0.0, 0.0, 0.0),
-                          (0.5, 1.0, 0.0),
-                          (1.0, 0.5, 1.0))}
-    elif a ==2:
-        cdict = {'red': ((1.0, 1.0, 1.0),
-                         (1.0, 1.0, 1.0),
-                         (1.0, 1.0, 1.0)),
-                 'green': ((1.0, 1.0, 1.0),
-                           (1.0, 1.0, 1.0),
-                           (1.0, 1.0, 1.0)),
-                 'blue': ((1.0, 1.0, 1.0),
-                          (1.0, 1.0,1.0),
-                          (1.0, 1.0, 1.0))}
-    else:
-        cdict = {'red':   [(0.0,  0.0, 0.0),
-                       (0.5,  1.0, 1.0),
-                       (1.0,  1.0, 1.0)],
-
-             'green': [(0.0,  0.0, 0.0),
-                       (0.25, 0.0, 0.0),
-                       (0.75, 1.0, 1.0),
-                       (1.0,  1.0, 1.0)],
-
-             'blue':  [(0.0,  0.0, 0.0),
-                       (0.5,  0.0, 0.0),
-                       (1.0,  1.0, 1.0)]}
+    cdict = {'red': ((0.0, 0.0, 0.0),
+                     (0.5, 1.0, 0.7),
+                     (1.0, 1.0, 1.0)),
+             'green': ((0.0, 0.0, 0.0),
+                       (0.5, 1.0, 0.0),
+                       (1.0, 1.0, 1.0)),
+             'blue': ((0.0, 0.0, 0.0),
+                      (0.5, 1.0, 0.0),
+                      (1.0, 0.5, 1.0))}
     my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
     pcolor(cma2,cmap=my_cmap)
     colorbar()

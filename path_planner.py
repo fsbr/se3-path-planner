@@ -298,7 +298,7 @@ class GridGraph:
         theta = np.arctan2(ygse,xgse)
         plt.plot(t.UTC,phi)
         # plt.plot(c_gsm.z, c_gsm.x)
-        plt.show()
+        # plt.show()
         
         print("i'm done plotting!")
         
@@ -307,9 +307,9 @@ class GridGraph:
         # the fact that I'm using [0] here means we aren't using the dinural change
         # this needs to change the boundary every time step and it's not
         # newPhi_c = np.array(np.arctan2(c_gse.x, c_gse.z))
-        newPhi_c = np.array(np.arctan2(c_gse.z, c_gse.x))
+        newPhi_c = np.array(np.arctan2(c_sm.z, c_sm.x))
         # latVector = np.array(np.arctan2(c_gse.y, c_gse.x))
-        latVector = np.array(np.arctan2(c_gse.x, c_gse.y))
+        latVector = np.array(np.arctan2(c_sm.x, c_sm.y))
         print("type of phi_c", type(np.array(newPhi_c)))
         print("type of latevector", type(latVector))
         # possible dimensions problem here
