@@ -1,0 +1,10 @@
+if this was a conference paper, what i have in mind is the following
+
+comparative analysis of cusp avoidance planners.  
+
+block diagram with the path planner --> feeds into the controller 
+i want it to be modular.
+
+performance metrics for it, and populate a table of the metrics
+
+come up with an analysis for it
