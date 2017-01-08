@@ -5,7 +5,9 @@
 
 # imports
 from spacepy import coordinates as coord
+import spacepy.time as spt
 from spacepy.time import Ticktock
+import datetime as dt
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -57,13 +59,25 @@ def tsygCyl2Car(phi_c,r):
     return x,y,z
 
 if __name__ == "__main__":
-    r = np.linspace(0,637000,10000)
+    r = np.linspace(0,6370,365)
     phi_c = getPhi_c(r)
     print(phi_c)
 
     x,y,z = tsygCyl2Car(phi_c,r)
+
+    cvals = coord.Coords([[i,j,k] for i,j,k in zip(x,y,z)], 'SM','car')
+
+    starttime = pd.Timestamp('2019-01-01T12:00:00')
+    endtime = pd.Timestamp('2020-01-01T12:00:00')
+    t = np.linspace(starttime.value, endtime.value, len(x))
+    print("length of t", t)
+    cvals.ticks = Ticktock([58484 + i for i in range(0,365)],'MJD')
+    cvals_gse = cvals.convert('GSE','car')
+    # setting arbitrary times is something i just need to know how to do
     ax = plt.subplot(111,projection='3d')
-    ax.plot(x,y,z,label='glorious cusp vector')
+    # ax.plot(x,y,z,label='glorious cusp vector')
+    ax.plot(cvals.x,cvals.y,cvals.z, label='sm cusp vector')
+    ax.plot(cvals_gse.x,cvals_gse.y,cvals_gse.z,label='gse cusp vector')
     ax.legend()
     plt.show()
      
