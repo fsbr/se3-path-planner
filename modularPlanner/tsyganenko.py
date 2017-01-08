@@ -58,6 +58,18 @@ def tsygCyl2Car(phi_c,r):
     z = r*np.cos(phi_c)
     return x,y,z
 
+def getSmOrbit():
+    df = pd.read_csv('01_Jan_2019.csv')
+    t = df['DefaultSC.A1ModJulian'] + 29999.5
+    x = df['DefaultSC.gse.X']
+    y = df['DefaultSC.gse.Y']
+    z = df['DefaultSC.gse.Z']
+    cvals = coord.Coords([[i,j,k] for i,j,k in zip(x,y,z)],'GSE','car')
+    cvals.ticks = Ticktock(t,'MJD')
+    sm = cvals.convert('SM','car')
+    return sm
+    
+
 if __name__ == "__main__":
     r = np.linspace(0,6370,365)
     phi_c = getPhi_c(r)
@@ -71,14 +83,24 @@ if __name__ == "__main__":
     endtime = pd.Timestamp('2020-01-01T12:00:00')
     t = np.linspace(starttime.value, endtime.value, len(x))
     print("length of t", t)
+    
+    # just increment julian days
     cvals.ticks = Ticktock([58484 + i for i in range(0,365)],'MJD')
     cvals_gse = cvals.convert('GSE','car')
+    cvals_geo = cvals.convert('GEO','car')
     # setting arbitrary times is something i just need to know how to do
+    sm = getSmOrbit()
     ax = plt.subplot(111,projection='3d')
     # ax.plot(x,y,z,label='glorious cusp vector')
+
+    # make unit vectors,mainly because i only care about pointing direction
     ax.plot(cvals.x,cvals.y,cvals.z, label='sm cusp vector')
-    ax.plot(cvals_gse.x,cvals_gse.y,cvals_gse.z,label='gse cusp vector')
+    ax.plot(sm.x,sm.y,sm.z, label='sm orbit')
+    # ax.plot(cvals_gse.x,cvals_gse.y,cvals_gse.z,label='gse cusp vector')
+    # ax.plot(cvals_geo.x,cvals_geo.y,cvals_geo.z,label='geo cusp vector')
     ax.legend()
     plt.show()
      
     print("phi_c",np.rad2deg(phi_c))
+
+    
