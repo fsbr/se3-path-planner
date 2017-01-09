@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #df = pd.read_csv('simpleorbit.csv')
 df = pd.read_csv('01_Jan_2019.csv')
+# df = pd.read_csv('Jan65.txt')
 print(df.tail())
 # i THINK this is what i need to get into the regular mjd timeframe
 t = df['DefaultSC.A1ModJulian'] + 29999.5
@@ -20,13 +21,13 @@ cvals.y = y
 cvals.z = z
 cvals.ticks = Ticktock(t, 'MJD')
 sm = cvals.convert('SM','car')
-gsm = cvals.convert('GEO', 'car')
+# gsm = cvals.convert('GEO', 'car')
 # need to memorize how to do coordinates and time in spacepy
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 ax.plot(cvals.x,cvals.y,cvals.z, label='orbit')
-ax.plot(sm.x, sm.y, sm.z, label='sm orbit')
-ax.plot(gsm.x, gsm.y, gsm.z, label='gsm orbit')
+# ax.plot(sm.x, sm.y, sm.z, label='sm orbit')
+# ax.plot(gsm.x, gsm.y, gsm.z, label='gsm orbit')
 ax.legend()
 plt.show()

@@ -90,15 +90,23 @@ if __name__ == "__main__":
     cvals_geo = cvals.convert('GEO','car')
     # setting arbitrary times is something i just need to know how to do
     sm = getSmOrbit()
+    
+    # comment the next two out for the 'original' plot
+    sm = sm.convert('GSE','car')
+    cvals = cvals.convert('GSE','car')
     ax = plt.subplot(111,projection='3d')
     # ax.plot(x,y,z,label='glorious cusp vector')
 
     # make unit vectors,mainly because i only care about pointing direction
-    ax.plot(cvals.x,cvals.y,cvals.z, label='sm cusp vector')
-    ax.plot(sm.x,sm.y,sm.z, label='sm orbit')
+    ax.plot(cvals.x,cvals.y,cvals.z, label='gse cusp vector')
+    ax.plot(sm.x,sm.y,sm.z, label='gse orbit')
     # ax.plot(cvals_gse.x,cvals_gse.y,cvals_gse.z,label='gse cusp vector')
     # ax.plot(cvals_geo.x,cvals_geo.y,cvals_geo.z,label='geo cusp vector')
-    ax.legend()
+    ax.set_xlabel('meters (x)')
+    ax.set_ylabel('meters (y)')
+    ax.set_zlabel('meters (z)')
+    plt.title('orbit and cusp vector')
+    ax.legend(loc='lower left')
     plt.show()
      
     print("phi_c",np.rad2deg(phi_c))
