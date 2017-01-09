@@ -62,7 +62,7 @@ def getSmOrbit():
     converts them to x,y,z in SM
     """
     # df = pd.read_csv('01_Jan_2019.csv')
-    df = pd.read_csv('jul_65_2.csv')
+    df = pd.read_csv('inc0.csv')
     t = df['DefaultSC.A1ModJulian'] + 29999.5
     x = df['DefaultSC.gse.X']
     y = df['DefaultSC.gse.Y']
