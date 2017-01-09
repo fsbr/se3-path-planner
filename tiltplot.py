@@ -16,11 +16,11 @@ def tilt(t):
 
     return np.rad2deg(np.arctan2(c_gsm.x, c_gsm.z))
 # whats kinda crazy is that some of the coordinate transformations look ridiculous
-tilts=tilt(spacepy.time.tickrange('2016-01-01T00:00:00', '2017-01-01T00:00:00', datetime.timedelta(hours=24)))
-tilts=tilt(spacepy.time.tickrange('2016-01-01T00:00:00', '2017-01-01T00:00:00', datetime.timedelta(hours=24)))
+tilts=tilt(spacepy.time.tickrange('2016-01-01T00:00:00', '2017-01-01T00:00:00', datetime.timedelta(hours=6)))
+tilts=tilt(spacepy.time.tickrange('2016-01-01T00:00:00', '2017-01-01T00:00:00', datetime.timedelta(hours=6)))
 print("tilts", tilts)
 plt.plot(tilts)
-plt.xlabel('Day of Year')
+plt.xlabel('Number of Quarter-days passed (1/4 day)')
 plt.ylabel('Dipole Tilt (degrees)') 
 plt.title('Magnetic Dipole Tilt as Function of Time')
 plt.show()

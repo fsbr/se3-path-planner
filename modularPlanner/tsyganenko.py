@@ -62,7 +62,7 @@ def getSmOrbit():
     converts them to x,y,z in SM
     """
     # df = pd.read_csv('01_Jan_2019.csv')
-    df = pd.read_csv('inc0.csv')
+    df = pd.read_csv('oct_65_2019.csv')
     t = df['DefaultSC.A1ModJulian'] + 29999.5
     x = df['DefaultSC.gse.X']
     y = df['DefaultSC.gse.Y']
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     sm = getSmOrbit()
     
     # comment the next two out for the 'original' plot
-    # sm = sm.convert('GSM','car')
-    # cvals = cvals.convert('GSM','car')
+    sm = sm.convert('GEO','car')
+    cvals = cvals.convert('GEO','car')
     ax = plt.subplot(111,projection='3d')
     # ax.plot(x,y,z,label='glorious cusp vector')
 
@@ -112,7 +112,9 @@ if __name__ == "__main__":
     ax.set_zlabel('meters (z)')
     plt.title('orbit and cusp vector')
     ax.legend(loc='lower left')
+    
     plt.show()
+    
      
     print("phi_c",np.rad2deg(phi_c))
 
