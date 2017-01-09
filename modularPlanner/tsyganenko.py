@@ -18,7 +18,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def getPhi_c(r, psi=0):
     """
-    outputs the cusp angle
+    outputs the cusp angle according to the tsyganenko paper
     """ 
 
     # tsyganenko gives sample values for phi_1
@@ -41,8 +41,6 @@ def tsygCyl2Car(phi_c,r):
     given phi_c = colatitude of cusp
     r = point of interest at the cusp
     """
-    # not sure but i think i need to have r = 1 easy to just comment out
-    # r = 1
     # check if r and phi_c have the same length
     if len(r) == len(phi_c):
         pass
@@ -59,19 +57,26 @@ def tsygCyl2Car(phi_c,r):
     return x,y,z
 
 def getSmOrbit():
-    df = pd.read_csv('01_Jan_2019.csv')
+    """
+    reads in the x,y,z coordinates (originally in GSE)
+    converts them to x,y,z in SM
+    """
+    # df = pd.read_csv('01_Jan_2019.csv')
+    df = pd.read_csv('jul_65_2.csv')
     t = df['DefaultSC.A1ModJulian'] + 29999.5
     x = df['DefaultSC.gse.X']
     y = df['DefaultSC.gse.Y']
     z = df['DefaultSC.gse.Z']
     cvals = coord.Coords([[i,j,k] for i,j,k in zip(x,y,z)],'GSE','car')
+
+    # okay so the correct "ticks" are getting set
     cvals.ticks = Ticktock(t,'MJD')
     sm = cvals.convert('SM','car')
     return sm
     
 
 if __name__ == "__main__":
-    r = np.linspace(0,6370,365)
+    r = np.linspace(0,10370,365)
     phi_c = getPhi_c(r)
     print(phi_c)
 
@@ -92,14 +97,14 @@ if __name__ == "__main__":
     sm = getSmOrbit()
     
     # comment the next two out for the 'original' plot
-    sm = sm.convert('GSE','car')
-    cvals = cvals.convert('GSE','car')
+    # sm = sm.convert('GSM','car')
+    # cvals = cvals.convert('GSM','car')
     ax = plt.subplot(111,projection='3d')
     # ax.plot(x,y,z,label='glorious cusp vector')
 
     # make unit vectors,mainly because i only care about pointing direction
-    ax.plot(cvals.x,cvals.y,cvals.z, label='gse cusp vector')
-    ax.plot(sm.x,sm.y,sm.z, label='gse orbit')
+    ax.plot(sm.x,sm.y,sm.z, label='sm orbit')
+    ax.plot(cvals.x,cvals.y,cvals.z,'g', label='sm cusp vector')
     # ax.plot(cvals_gse.x,cvals_gse.y,cvals_gse.z,label='gse cusp vector')
     # ax.plot(cvals_geo.x,cvals_geo.y,cvals_geo.z,label='geo cusp vector')
     ax.set_xlabel('meters (x)')
