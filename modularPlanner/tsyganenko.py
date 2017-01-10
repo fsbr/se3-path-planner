@@ -77,9 +77,13 @@ def getSmOrbit():
 
 if __name__ == "__main__":
     r = np.linspace(0,10370,365)
+    r0 = np.linspace(0,2*6370, 365)
+    phi_c0 = getPhi_c(r0)
     phi_c = getPhi_c(r)
     print(phi_c)
-
+    plt.plot(r0,phi_c)
+    plt.title('r vs phi_c')
+    plt.show()
     x,y,z = tsygCyl2Car(phi_c,r)
 
     cvals = coord.Coords([[i,j,k] for i,j,k in zip(x,y,z)], 'SM','car')
@@ -116,6 +120,9 @@ if __name__ == "__main__":
     plt.show()
     
      
-    print("phi_c",np.rad2deg(phi_c))
+    # print("phi_c",np.rad2deg(phi_c))
+
+    # trying to understand the cusp tsyganenko unit
+    sample_phi
 
     
