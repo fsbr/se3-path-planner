@@ -41,14 +41,19 @@ def tsygCyl2Car(phi_c,r):
     given phi_c = colatitude of cusp
     r = point of interest at the cusp
     """
+
     # check if r and phi_c have the same length
-    if len(r) == len(phi_c):
-        pass
-    else:
-        # the lengths must not be equal
-        print("something is wrong")
-    
-    y = np.zeros(len(phi_c))
+    # if len(r) == len(phi_c):
+    #     pass
+    # else:
+    #     # the lengths must not be equal
+    #     print("something is wrong")
+
+    try: 
+        len(r) > 0
+        y = np.zeros(len(phi_c))
+    except TypeError:
+        y = 0
 
     # perform the coordinate transforms
     x = r*np.sin(phi_c)
@@ -123,6 +128,5 @@ if __name__ == "__main__":
     # print("phi_c",np.rad2deg(phi_c))
 
     # trying to understand the cusp tsyganenko unit
-    sample_phi
 
     
