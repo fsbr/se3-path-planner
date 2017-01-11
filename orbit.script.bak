@@ -8,15 +8,15 @@
 
 Create Spacecraft DefaultSC;
 GMAT DefaultSC.DateFormat = UTCGregorian;
-GMAT DefaultSC.Epoch = '22 Jul 2016 11:59:28.000';
+GMAT DefaultSC.Epoch = '01 Dec 2016 11:59:28.000';
 GMAT DefaultSC.CoordinateSystem = EarthMJ2000Eq;
 GMAT DefaultSC.DisplayStateType = Keplerian;
-GMAT DefaultSC.SMA = 7191.938817629026;
-GMAT DefaultSC.ECC = 0.02454974900598209;
+GMAT DefaultSC.SMA = 7191.938817629031;
+GMAT DefaultSC.ECC = 0.02454974900598312;
 GMAT DefaultSC.INC = 54.99999999999999;
 GMAT DefaultSC.RAAN = 306.6148021947984;
-GMAT DefaultSC.AOP = 314.1905515359945;
-GMAT DefaultSC.TA = 99.88774933204648;
+GMAT DefaultSC.AOP = 314.1905515359953;
+GMAT DefaultSC.TA = 99.88774933204559;
 GMAT DefaultSC.DryMass = 10;
 GMAT DefaultSC.Cd = 2.2;
 GMAT DefaultSC.Cr = 1.8;
@@ -45,6 +45,7 @@ GMAT DefaultSC.AttitudeDisplayStateType = 'Quaternion';
 GMAT DefaultSC.AttitudeRateDisplayStateType = 'AngularVelocity';
 GMAT DefaultSC.AttitudeCoordinateSystem = EarthMJ2000Eq;
 GMAT DefaultSC.EulerAngleSequence = '321';
+
 
 
 %----------------------------------------
@@ -91,9 +92,9 @@ GMAT gse.Axes = GSE;
 
 Create OrbitView DefaultOrbitView;
 GMAT DefaultOrbitView.SolverIterations = Current;
-GMAT DefaultOrbitView.UpperLeft = [ 0.1801470588235294 0.0440251572327044 ];
-GMAT DefaultOrbitView.Size = [ 0.9926470588235294 0.9528301886792453 ];
-GMAT DefaultOrbitView.RelativeZOrder = 167;
+GMAT DefaultOrbitView.UpperLeft = [ 0.1779411764705882 0.04148148148148148 ];
+GMAT DefaultOrbitView.Size = [ 0.9970588235294118 0.9555555555555556 ];
+GMAT DefaultOrbitView.RelativeZOrder = 239;
 GMAT DefaultOrbitView.Maximized = true;
 GMAT DefaultOrbitView.Add = {DefaultSC, Earth};
 GMAT DefaultOrbitView.CoordinateSystem = EarthMJ2000Eq;
@@ -122,9 +123,9 @@ GMAT DefaultOrbitView.EnableConstellations = On;
 
 Create GroundTrackPlot DefaultGroundTrackPlot;
 GMAT DefaultGroundTrackPlot.SolverIterations = Current;
-GMAT DefaultGroundTrackPlot.UpperLeft = [ 0.1801470588235294 0.0440251572327044 ];
-GMAT DefaultGroundTrackPlot.Size = [ 0.9926470588235294 0.9528301886792453 ];
-GMAT DefaultGroundTrackPlot.RelativeZOrder = 70;
+GMAT DefaultGroundTrackPlot.UpperLeft = [ 0.1779411764705882 0.04148148148148148 ];
+GMAT DefaultGroundTrackPlot.Size = [ 0.9970588235294118 0.9555555555555556 ];
+GMAT DefaultGroundTrackPlot.RelativeZOrder = 80;
 GMAT DefaultGroundTrackPlot.Maximized = true;
 GMAT DefaultGroundTrackPlot.Add = {DefaultSC};
 GMAT DefaultGroundTrackPlot.DataCollectFrequency = 1;
@@ -157,4 +158,4 @@ GMAT ReportFile1.WriteReport = true;
 %----------------------------------------
 
 BeginMissionSequence;
-Propagate DefaultProp(DefaultSC) {DefaultSC.ElapsedSecs = 86400};
+Propagate DefaultProp(DefaultSC) {DefaultSC.ElapsedSecs = 7776000};

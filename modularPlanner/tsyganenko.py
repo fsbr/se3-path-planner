@@ -16,6 +16,23 @@ from mpl_toolkits.mplot3d import Axes3D
 # one possible way to structure this is to have *.h file that includes all the 
 # constants we might be interested in using
 
+def getTilt(t):
+    """ 
+    gets the dipole tilt and adds it to the tsyganenko cusp model
+    almost a direct copy of J. niehof's code
+    This also somewhat necessitates that we do the rest of the analysis
+    in the GSM frame
+    
+    t = the pandas list of times (I'm assuming MJD for this use case)
+    """
+    t = spt.Ticktock(t,'MJD')
+    c_sm = coord.Coords([[0,0,1.0]] * len(t), 'SM', 'car')
+    c_sm.ticks = t
+    
+    # convert to gsm
+    c_gsm = c_sm.convert('GSM','car')
+    return np.rad2deg(np.arctan2(c_gsm.x,c_gsm.z))
+    
 def getPhi_c(r, psi=0):
     """
     outputs the cusp angle according to the tsyganenko paper
@@ -127,7 +144,10 @@ if __name__ == "__main__":
     ax.legend(loc='lower left')
     
     plt.show()
-    
+    # t = Ticktock() 
+    tilts = getTilt(cvals.ticks)
+    plt.plot(tilts)
+    plt.show() 
      
     # print("phi_c",np.rad2deg(phi_c))
 
