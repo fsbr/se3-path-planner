@@ -41,26 +41,30 @@ def tsygCyl2Car(phi_c,r):
     given phi_c = colatitude of cusp
     r = point of interest at the cusp
     """
-
-    # check if r and phi_c have the same length
-    # if len(r) == len(phi_c):
-    #     pass
-    # else:
-    #     # the lengths must not be equal
-    #     print("something is wrong")
-
-    try: 
-        len(r) > 0
+    print("type(phi_c)", np.isscalar(phi_c))
+    a = np.isscalar(phi_c)
+    if not np.isscalar(phi_c):
+        # y is probably a vector need to test
+        # update i THINK it works
         y = np.zeros(len(phi_c))
-    except TypeError:
+    else:
+        # y must be a scalar
         y = 0
+    #y = 0 
+    #try: 
+    #    # len(r) > 0
+    #    y = np.zeros(len(phi_c))
+    #except TypeError:
+    #    y = 0
+	#else:
+#		y = 0
 
     # perform the coordinate transforms
     x = r*np.sin(phi_c)
     y = y
     z = r*np.cos(phi_c)
     return x,y,z
-
+    # return a
 def getSmOrbit():
     """
     reads in the x,y,z coordinates (originally in GSE)
