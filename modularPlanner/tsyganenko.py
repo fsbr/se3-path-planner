@@ -47,7 +47,7 @@ def getPhi_c(r, psi=0):
     alpha_2 = 0.0314
     phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
     num = np.sqrt(r)
-    den = np.sqrt(r + (1/(np.arcsin(phi_1)**2)) - 1) 
+    den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
     phi_c = num/den + psi
     return phi_c
 
@@ -71,7 +71,7 @@ def tsygCyl2Car(phi_c,r):
     x = r*np.sin(phi_c)
     y = y
     z = r*np.cos(phi_c)
-    return x/Re,y/Re,z/Re
+    return x,y,z
     # return a
 
 
@@ -93,12 +93,43 @@ def getSmOrbit():
     sm = cvals.convert('SM','car')
     return sm
 
-def variableRphiC(r,phi_c,psi):
+def orbitalCuspLocation(c,t):
     """
     returns the cusp location that corresponds with the satellites 
     actual height above the earth
+    inputs: c: satellite cartesian spacepy coords object
+            ticks should be instatiated a priori and the 
+            t: pandas list of times
+    outputs: x,y,z coordinates
     """
-    pass 
+    
+    x = c.x
+    y = c.y
+    z = c.z
+    
+    # make sure that r is in earth radii
+    # this should be a list I think
+
+    # it's also possible that these list comprehensions are WRONG
+    r = [np.sqrt(i**2 + j**2 + k**2) for i,j,k in zip(x,y,z)]
+    print("r euqals to",r)
+    psi = [getTilt(t_i) for t_i in t]
+    psi = np.asarray(psi)
+
+    #phi_c = [getPhi_c(r_i, psi_i) for r_i,psi_i in zip(r,psi)]
+    phi_c = getPhi_c(r,psi)
+    print("phi_c no LC",phi_c)
+    # x,y,z = [tsygCyl2Car(r_i,phi_c) for r_i, phi_c in zip(r,phi_c)]
+    x = []
+    y = []
+    z = []
+    x,y,z = tsygCyl2Car(r,phi_c)
+    print("x equals to",x)
+    print("y equals to",y)
+    print("z equals to",z)
+    return x,y,z 
+    
+        
 
 if __name__ == "__main__":
     r = np.linspace(0,10370,365)
