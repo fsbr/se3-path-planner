@@ -15,7 +15,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # one possible way to structure this is to have *.h file that includes all the 
 # constants we might be interested in using
-
+Re = 6731 #km
 def getTilt(t):
     """ 
     gets the dipole tilt and adds it to the tsyganenko cusp model
@@ -47,7 +47,7 @@ def getPhi_c(r, psi=0):
     alpha_2 = 0.0314
     phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
     num = np.sqrt(r)
-    den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
+    den = np.sqrt(r + (1/(np.arcsin(phi_1)**2)) - 1) 
     phi_c = num/den + psi
     return phi_c
 
@@ -67,21 +67,14 @@ def tsygCyl2Car(phi_c,r):
     else:
         # y must be a scalar
         y = 0
-    #y = 0 
-    #try: 
-    #    # len(r) > 0
-    #    y = np.zeros(len(phi_c))
-    #except TypeError:
-    #    y = 0
-	#else:
-#		y = 0
-
     # perform the coordinate transforms
     x = r*np.sin(phi_c)
     y = y
     z = r*np.cos(phi_c)
-    return x,y,z
+    return x/Re,y/Re,z/Re
     # return a
+
+
 def getSmOrbit():
     """
     reads in the x,y,z coordinates (originally in GSE)
@@ -99,7 +92,13 @@ def getSmOrbit():
     cvals.ticks = Ticktock(t,'MJD')
     sm = cvals.convert('SM','car')
     return sm
-    
+
+def variableRphiC(r,phi_c,psi):
+    """
+    returns the cusp location that corresponds with the satellites 
+    actual height above the earth
+    """
+    pass 
 
 if __name__ == "__main__":
     r = np.linspace(0,10370,365)
@@ -149,8 +148,6 @@ if __name__ == "__main__":
     plt.plot(tilts)
     plt.show() 
      
-    # print("phi_c",np.rad2deg(phi_c))
-
     # trying to understand the cusp tsyganenko unit
 
     
