@@ -1,4 +1,6 @@
 # i'm going to try some random map projections
+:w
+:q
 
 # lets do equirectangular because I think that it's  
 import numpy as np

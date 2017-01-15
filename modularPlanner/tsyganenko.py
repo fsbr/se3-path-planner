@@ -127,9 +127,9 @@ def orbitalCuspLocation(c,t):
     # y = []
     # z = []
     x,y,z = tsygCyl2Car(r,phi_c)
-    x = x*6371
-    y = y*6371
-    z = z*6371
+    x = x*Re
+    y = y*Re
+    z = z*Re
     print("x equals to",x)
     print("y equals to",y)
     print("z equals to",z)
