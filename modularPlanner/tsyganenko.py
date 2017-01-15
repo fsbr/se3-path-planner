@@ -57,6 +57,8 @@ def tsygCyl2Car(phi_c,r):
     converts to standard rh rectangular coordinate system
     given phi_c = colatitude of cusp
     r = point of interest at the cusp
+    I believe this is in GSM coordinates if it incorporates the psi
+    Or it's in in 
     """
     print("type(phi_c)", np.isscalar(phi_c))
     a = np.isscalar(phi_c)
