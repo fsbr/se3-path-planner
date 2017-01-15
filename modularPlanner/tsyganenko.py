@@ -106,27 +106,34 @@ def orbitalCuspLocation(c,t):
     x = c.x
     y = c.y
     z = c.z
-    
     # make sure that r is in earth radii
     # this should be a list I think
 
     # it's also possible that these list comprehensions are WRONG
-    r = [np.sqrt(i**2 + j**2 + k**2) for i,j,k in zip(x,y,z)]
-    print("r euqals to",r)
-    psi = [getTilt(t_i) for t_i in t]
+    # yes i think that list comprehensions aren't the right thing
+    # to do here.
+
+    # why is it so big? :{
+    r = np.sqrt(x**2 + y**2 + z**2) 
+    # print("r euqals to",r)
+    psi = getTilt(t)
     psi = np.asarray(psi)
 
     #phi_c = [getPhi_c(r_i, psi_i) for r_i,psi_i in zip(r,psi)]
     phi_c = getPhi_c(r,psi)
-    print("phi_c no LC",phi_c)
+    # print("phi_c no LC",phi_c)
     # x,y,z = [tsygCyl2Car(r_i,phi_c) for r_i, phi_c in zip(r,phi_c)]
-    x = []
-    y = []
-    z = []
+    # x = []
+    # y = []
+    # z = []
     x,y,z = tsygCyl2Car(r,phi_c)
+    x = x*6371
+    y = y*6371
+    z = z*6371
     print("x equals to",x)
     print("y equals to",y)
     print("z equals to",z)
+    
     return x,y,z 
     
         
