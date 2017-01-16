@@ -31,6 +31,7 @@ def getTilt(t):
     
     # convert to gsm
     c_gsm = c_sm.convert('GSM','car')
+    # i set this to be negative as an experiment.
     return np.rad2deg(np.arctan2(c_gsm.x,c_gsm.z))
     
 def getPhi_c(r, psi=0):
@@ -74,6 +75,8 @@ def tsygCyl2Car(phi_c,r):
     # perform the coordinate transforms
 
     # i've check this trig like 8000 times i don't think its the problem
+
+    # what if i need to convert it to latitude longitude instead of rectangle?
     x = r*np.sin(phi_c)
     y = y
     z = r*np.cos(phi_c)
@@ -127,12 +130,15 @@ def orbitalCuspLocation(c,t):
     psi = np.asarray(psi)
     
     # units are hard to keep organized definitely something to work on
-    plt.plot(c.ticks.MJD,psi)
-    plt.show()
+    # plt.plot(c.ticks.MJD,psi)
+    # plt.show()
 
     psi = np.deg2rad(psi)
     print("psi is",psi)
     phi_c = getPhi_c(r,psi)
+    plt.plot(phi_c)
+    plt.title('phi_c in ocl function')
+    plt.show()
 
     xc,yc,zc = tsygCyl2Car(r,phi_c)
     xc = xc*Re
