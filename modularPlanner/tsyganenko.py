@@ -51,7 +51,7 @@ def getPhi_c(r, psi=0):
     phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
     num = np.sqrt(r)
     den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
-    phi_c = num/den + psi
+    phi_c = np.arcsin(num/den) + psi
     return phi_c
 
 
@@ -68,9 +68,11 @@ def tsygCyl2Car(phi_c,r):
     if not np.isscalar(phi_c):
         # y is probably a vector need to test
         # update i THINK it works
+        print("the quantity is a vector")
         y = np.zeros(len(phi_c))
     else:
         # y must be a scalar
+        print("the quantity is a scalar")
         y = 0
     # perform the coordinate transforms
 
@@ -139,11 +141,16 @@ def orbitalCuspLocation(c,t):
     plt.plot(phi_c)
     plt.title('phi_c in ocl function')
     plt.show()
-
+    # rsat = 1.127
     xc,yc,zc = tsygCyl2Car(r,phi_c)
     xc = xc*Re
     yc = yc*Re
     zc = zc*Re 
+
+    # arctan
+    plt.plot(xc,zc)
+    plt.title('cusp vector xz cross section')
+    plt.show()
     # be very careful about the scaling here
     print("x equals to",xc)
     print("y equals to",yc)
