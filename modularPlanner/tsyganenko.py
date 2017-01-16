@@ -45,6 +45,8 @@ def getPhi_c(r, psi=0):
     phi_c0 = 0.24
     alpha_1 = 0.01287
     alpha_2 = 0.0314
+
+    # i'm kind of convincing myself that psi isn't that important
     phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
     num = np.sqrt(r)
     den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
@@ -70,6 +72,8 @@ def tsygCyl2Car(phi_c,r):
         # y must be a scalar
         y = 0
     # perform the coordinate transforms
+
+    # i've check this trig like 8000 times i don't think its the problem
     x = r*np.sin(phi_c)
     y = y
     z = r*np.cos(phi_c)
@@ -105,6 +109,7 @@ def orbitalCuspLocation(c,t):
     outputs: x,y,z coordinates
     """
     
+    # the tsyg equation takes the coordinates as units of EARTH RADII
     x = c.x
     y = c.y
     z = c.z
@@ -116,27 +121,30 @@ def orbitalCuspLocation(c,t):
     # to do here.
 
     # why is it so big? :{
-    r = np.sqrt(x**2 + y**2 + z**2) 
+    r = np.sqrt(x**2 + y**2 + z**2)/Re 
     # print("r euqals to",r)
     psi = getTilt(t)
     psi = np.asarray(psi)
-
-    #phi_c = [getPhi_c(r_i, psi_i) for r_i,psi_i in zip(r,psi)]
-    phi_c = getPhi_c(r,psi)
-    # print("phi_c no LC",phi_c)
-    # x,y,z = [tsygCyl2Car(r_i,phi_c) for r_i, phi_c in zip(r,phi_c)]
-    # x = []
-    # y = []
-    # z = []
-    x,y,z = tsygCyl2Car(r,phi_c)
-    x = x*Re
-    y = y*Re
-    z = z*Re
-    print("x equals to",x)
-    print("y equals to",y)
-    print("z equals to",z)
     
-    return x,y,z 
+    # units are hard to keep organized definitely something to work on
+    plt.plot(c.ticks.MJD,psi)
+    plt.show()
+
+    psi = np.deg2rad(psi)
+    print("psi is",psi)
+    phi_c = getPhi_c(r,psi)
+
+    xc,yc,zc = tsygCyl2Car(r,phi_c)
+    xc = xc*Re
+    yc = yc*Re
+    zc = zc*Re 
+    # be very careful about the scaling here
+    print("x equals to",xc)
+    print("y equals to",yc)
+    print("sum of the y vector",sum(yc))
+    print("z equals to",zc)
+    
+    return xc,yc,zc
     
         
 
