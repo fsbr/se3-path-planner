@@ -183,18 +183,15 @@ inc = '65'
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec']
 inclinations = [float(55+5*i) for i in range(0,8)]
-print("type of inclinations", type(inclinations[0]))
-
-
-
-batch = script%(test,inc)
+inclinations = inclinations[::]
+batch = [[script%(month,inclination) for month in months] for inclination in inclinations]
 # batch = [[script%(month,inclination) for month in months] for inclination in inclinations]
-print(batch)
 f.write(batch)
 f.close()
 
-call(["./GmatConsole-R2016a", scriptname])
-call(["mv", output_location+"ReportFile1.txt", data_destination+"test.csv"])
-call(["rm", scriptname])
+# here's the part where I'm actually trying to run stuff
+# call(["./GmatConsole-R2016a", scriptname])
+# call(["mv", output_location+"ReportFile1.txt", data_destination+"test.csv"])
+# call(["rm", scriptname])
 
 
