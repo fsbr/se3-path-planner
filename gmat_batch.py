@@ -174,24 +174,34 @@ from subprocess import call
 # i'm seeing a great opportunity to use "map" here
 output_location = "../output/"
 data_destination = "/home/tckf/BostonUniversity/research/data-se3-path-planner/yearData/batch2019/"
-
-
-scriptname = "test.script"
-f=open(scriptname,'w')
-test = 'Jan'
-inc = '65'
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec']
 inclinations = [float(55+5*i) for i in range(0,8)]
 inclinations = inclinations[::]
-batch = [[script%(month,inclination) for month in months] for inclination in inclinations]
-# batch = [[script%(month,inclination) for month in months] for inclination in inclinations]
-f.write(batch)
-f.close()
 
-# here's the part where I'm actually trying to run stuff
-# call(["./GmatConsole-R2016a", scriptname])
-# call(["mv", output_location+"ReportFile1.txt", data_destination+"test.csv"])
-# call(["rm", scriptname])
+# scriptPrefix = [['%s%s.script'%(month,str(int(inclination))) for month in months] for inclination in inclinations]
+# print(scriptPrefix)
 
 
+def gmatBatch(month,inclination):
+
+    # this function runs the simulations that i want for the colormap
+    scriptname = "%s%s.script"%(month,str(int(inclination)))
+
+    # all i want to do is 
+    f=open(scriptname,'w')
+    test = 'Jan'
+    inc = '65'
+    # batch = [[script%(month,inclination) for month in months] for inclination in inclinations]
+    batch = script%(month,inclination)
+    # here i need the particular "batch" that corresponds to the spot in the list comp.
+    f.write(batch)
+    f.close()
+
+    # here's the part where I'm actually trying to run stuff
+    call(["./GmatConsole-R2016a", scriptname])
+    call(["mv", output_location+"ReportFile1.txt", data_destination+"%s%s_results.csv"%(month,str(int(inclination)))])
+    call(["rm", scriptname])
+
+if __name__ == "__main__":
+    [[gmatBatch(month,inclination) for month in months] for inclination in inclinations]

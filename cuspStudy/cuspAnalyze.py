@@ -6,7 +6,7 @@ import numpy as np
 import itertools as it
 import path_planner as plan
 pathName = '../../data-se3-path-planner/cherylData/'
-pathName1 = '../../data-se3-path-planner/yearData/'
+pathName1 = '../../data-se3-path-planner/yearData/batch2019/'
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 inclinations = ['55', '60', '65', '70', '75', '80', '85', '90']
 inclinations = inclinations[::-1] # reverses the inclinations 
@@ -119,7 +119,7 @@ cma2 =[]
 
 # the fact that you can call a function in a list comprehension is the number one reason
 # why i'm going to stick with python
-cma2  =[[createCma(pathName+month+inclination+'.txt') for month in months ] for inclination in inclinations] 
+cma2  =[[createCma(pathName1+month+inclination+'.txt') for month in months ] for inclination in inclinations] 
 # cma2 = [[createCma(pathName1+'test4.txt')]]
 print("cma2", cma2)
 
