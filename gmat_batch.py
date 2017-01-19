@@ -176,7 +176,7 @@ output_location = "../output/"
 data_destination = "/home/tckf/BostonUniversity/research/data-se3-path-planner/yearData/batch2019/"
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec']
-inclinations = [float(55+5*i) for i in range(0,8)]
+inclinations = [55+5*i for i in range(0,8)]
 inclinations = inclinations[::]
 
 # scriptPrefix = [['%s%s.script'%(month,str(int(inclination))) for month in months] for inclination in inclinations]
@@ -200,7 +200,7 @@ def gmatBatch(month,inclination):
 
     # here's the part where I'm actually trying to run stuff
     call(["./GmatConsole-R2016a", scriptname])
-    call(["mv", output_location+"ReportFile1.txt", data_destination+"%s%s_results.csv"%(month,str(int(inclination)))])
+    call(["mv", output_location+"ReportFile1.txt", data_destination+"%s%s_results.csv"%(month,str(inclination))])
     call(["rm", scriptname])
 
 if __name__ == "__main__":
