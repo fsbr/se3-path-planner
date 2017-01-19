@@ -138,9 +138,9 @@ def orbitalCuspLocation(c,t):
     psi = np.deg2rad(psi)
     print("psi is",psi)
     phi_c = getPhi_c(r,psi)
-    plt.plot(phi_c)
-    plt.title('phi_c in ocl function')
-    plt.show()
+    # plt.plot(phi_c)
+    # plt.title('phi_c in ocl function')
+    # plt.show()
     # rsat = 1.127
     xc,yc,zc = tsygCyl2Car(r,phi_c)
     xc = xc*Re
@@ -148,9 +148,9 @@ def orbitalCuspLocation(c,t):
     zc = zc*Re 
 
     # arctan
-    plt.plot(xc,zc)
-    plt.title('cusp vector xz cross section')
-    plt.show()
+    # plt.plot(xc,zc)
+    # plt.title('cusp vector xz cross section')
+    # plt.show()
     # be very careful about the scaling here
     print("x equals to",xc)
     print("y equals to",yc)
