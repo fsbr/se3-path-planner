@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # In[1]:
@@ -141,7 +140,7 @@ def getColorMap(filename):
     # plt.plot(cusp_location_sph.ticks.MJD[lowBound:highBound],cusp_location_sph.long[lowBound:highBound],label='cusp')
     # plt.show()
 
-    modlat = 90-cusp_location_sph.lati 
+    modlat = cusp_location_sph.lati 
     print("modlat",modlat)
 
 
@@ -189,15 +188,37 @@ def getColorMap(filename):
 
 cma2  =[[getColorMap(pathname+month+str(inclination)+'_results.csv') for month in months ] for inclination in inclinations] 
 if __name__ == "__main__":
+    # cdict = {'red': ((0.0, 0.0, 0.0),
+    #                  (0.5, 1.0, 0.7),
+    #                  (1.0, 1.0, 1.0)),
+    #          'green': ((0.0, 0.0, 0.0),
+    #                    (0.5, 1.0, 0.0),
+    #                    (1.0, 1.0, 1.0)),
+    #          'blue': ((0.0, 0.0, 0.0),
+    #                   (0.5, 1.0, 0.0),
+    #                   (1.0, 0.5, 1.0))}
+
     cdict = {'red': ((0.0, 0.0, 0.0),
-                     (0.5, 1.0, 0.7),
+                     (0.1, 0.5, 0.5),
+                     (0.2, 0.0, 0.0),
+                     (0.4, 0.2, 0.2),
+                     (0.6, 0.0, 0.0),
+                     (0.8, 1.0, 1.0),
                      (1.0, 1.0, 1.0)),
-             'green': ((0.0, 0.0, 0.0),
-                       (0.5, 1.0, 0.0),
-                       (1.0, 1.0, 1.0)),
-             'blue': ((0.0, 0.0, 0.0),
-                      (0.5, 1.0, 0.0),
-                      (1.0, 0.5, 1.0))}
+            'green':((0.0, 0.0, 0.0),
+                     (0.1, 0.0, 0.0),
+                     (0.2, 0.0, 0.0),
+                     (0.4, 1.0, 1.0),
+                     (0.6, 1.0, 1.0),
+                     (0.8, 1.0, 1.0),
+                     (1.0, 0.0, 0.0)),
+            'blue': ((0.0, 0.0, 0.0),
+                     (0.1, 0.5, 0.5),
+                     (0.2, 1.0, 1.0),
+                     (0.4, 1.0, 1.0),
+                     (0.6, 0.0, 0.0),
+                     (0.8, 0.0, 0.0),
+                     (1.0, 0.0, 0.0))}
     my_cmap = colors.LinearSegmentedColormap('my_colormap',cdict,256)
     plt.pcolor(cma2,cmap=my_cmap)
     plt.colorbar()
