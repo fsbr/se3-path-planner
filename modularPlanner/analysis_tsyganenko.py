@@ -16,7 +16,12 @@ from mpl_toolkits.mplot3d import Axes3D
 import sys
 earth_radius_ax = 1.5*6371 #km
 #adding the year data here so I don't have to crush my github repo
+<<<<<<< HEAD
 pathname = '../../data-se3-path-planner/yearData/batch2015/'
+=======
+pathname = '../../data-se3-path-planner/yearData/batch2019/'
+pathname = '../../batch2019/'
+>>>>>>> a089a6d2b66d43fcb3d21993ff823228fdbff35b
 sys.path.append(pathname)
 
 
@@ -53,6 +58,7 @@ def getColorMap(filename):
 
     spacecraft = coord.Coords([[i,j,k] for i,j,k in zip(x,y,z)], 'GSE', 'car')
     spacecraft.ticks = Ticktock(t,'MJD')
+    # originally SM
     spacecraft = spacecraft.convert('SM','car')
     points = 10000
     # this figure validates what I already expected
@@ -116,8 +122,8 @@ def getColorMap(filename):
     # In[5]:
 
     # the working configuration is 'SM'
-    spacecraft_sph = spacecraft.convert('SM','sph')
-    cusp_location_sph = cusp_location.convert('SM','sph')
+    spacecraft_sph = spacecraft.convert('GSM','sph')
+    cusp_location_sph = cusp_location.convert('GSM','sph')
 
 
     # In[6]:
@@ -140,7 +146,7 @@ def getColorMap(filename):
     # plt.plot(cusp_location_sph.ticks.MJD[lowBound:highBound],cusp_location_sph.long[lowBound:highBound],label='cusp')
     # plt.show()
 
-    modlat = cusp_location_sph.lati 
+    modlat = 90 - cusp_location_sph.lati 
     print("modlat",modlat)
 
 
@@ -150,7 +156,9 @@ def getColorMap(filename):
     count = []
     c = 0
     for satlat,cusplat, satlon,cusplon in zip(spacecraft_sph.lati, modlat, spacecraft_sph.long, cusp_location_sph.long):
-        if 0<=cusplon<180 and abs(satlat - cusplat)<=4 and abs(satlon-cusplon)<=4:
+        # 0<cusplon<180 i think i need a way to ensure that I'm looking at the dayside 
+        # bear in mind that these bounds WILL ONLY WORK in earth - sun line centered coordinate systems
+        if abs(satlat - cusplat)<=2 and abs(satlon-cusplon)<=1:
             # right now i'm using +/- 2 deg for the latitude,
             # and +/- 2 deg for the longitude
             c+=1
