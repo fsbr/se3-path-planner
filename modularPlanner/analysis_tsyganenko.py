@@ -16,7 +16,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import sys
 earth_radius_ax = 1.5*6371 #km
 #adding the year data here so I don't have to crush my github repo
-pathname = '../../data-se3-path-planner/yearData/batch2019/'
+pathname = '../../data-se3-path-planner/yearData/batch2015/'
 sys.path.append(pathname)
 
 
@@ -27,7 +27,7 @@ sys.path.append(pathname)
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
         'Oct', 'Nov', 'Dec']
 # months = ['Jan', 'Jul', 'Dec']
-inclinations = [55+5*i for i in range(0,8)] #8 
+inclinations = [i for i in  range(0,90,5)] #8 
 inclinations = inclinations[::]
 
 
@@ -222,5 +222,9 @@ if __name__ == "__main__":
     my_cmap = colors.LinearSegmentedColormap('my_colormap',cdict,256)
     plt.pcolor(cma2,cmap=my_cmap)
     plt.colorbar()
+    plt.xlabel('Start Month')
+    # y_labels = [str(i) for i in  range(0,90,5)] #8 
+    plt.yticks(inclinations,str(inclinations)) 
+    plt.ylabel('Inclinations')
+    plt.title('Cusp Crossings Analysis 2015')
     plt.show()
-    
