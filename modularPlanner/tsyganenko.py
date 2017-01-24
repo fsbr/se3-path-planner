@@ -51,6 +51,8 @@ def getPhi_c(r, psi=0):
     phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
     num = np.sqrt(r)
     den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
+    # just an experiment to see hwat happens. original and "correct"
+    # is + psi
     phi_c = np.arcsin(num/den) + psi
     return phi_c
 

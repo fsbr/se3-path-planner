@@ -16,12 +16,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import sys
 earth_radius_ax = 1.5*6371 #km
 #adding the year data here so I don't have to crush my github repo
-<<<<<<< HEAD
 pathname = '../../data-se3-path-planner/yearData/batch2015/'
-=======
-pathname = '../../data-se3-path-planner/yearData/batch2019/'
-pathname = '../../batch2019/'
->>>>>>> a089a6d2b66d43fcb3d21993ff823228fdbff35b
+# pathname = '../../data-se3-path-planner/yearData/batch2019/'
+# pathname = '../../batch2019/'
 sys.path.append(pathname)
 
 
@@ -81,6 +78,7 @@ def getColorMap(filename):
 
     # goal, plot PHI on the same plot
     xc,yc,zc = tsyg.orbitalCuspLocation(spacecraft,t)
+    # originally 'SM'
     cusp_location = coord.Coords([[i,j,k] for i,j,k in zip(xc,yc,zc)], 'SM', 'car')
     cusp_location.ticks = Ticktock(t,'MJD')
     # cusp_location = cusp_location.convert('SM','car')
@@ -232,7 +230,7 @@ if __name__ == "__main__":
     plt.colorbar()
     plt.xlabel('Start Month')
     # y_labels = [str(i) for i in  range(0,90,5)] #8 
-    plt.yticks(inclinations,str(inclinations)) 
+    # plt.yticks(inclinations,str(inclinations)) 
     plt.ylabel('Inclinations')
     plt.title('Cusp Crossings Analysis 2015')
     plt.show()
