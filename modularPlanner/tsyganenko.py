@@ -48,7 +48,10 @@ def getPhi_c(r, psi=0):
     alpha_2 = 0.0314
 
     # i'm kind of convincing myself that psi isn't that important
-    phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
+
+    # I'm dropping the cusp depression terms for now to try to get to the bottom of this model.
+    # phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
+    phi_1 = phi_c0
     num = np.sqrt(r)
     den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
     # just an experiment to see hwat happens. original and "correct"
@@ -84,7 +87,20 @@ def tsygCyl2Car(phi_c,r):
     x = r*np.sin(phi_c)
     y = y
     z = r*np.cos(phi_c)
-    return x,y,z
+
+
+    # below I'll just use the spherical outright.
+    # note that this is in SM
+    if not np.isscalar(phi_c):
+        print('vector')
+        r = np.ones(len(phi_c))
+        lat = 90 - np.rad2deg(phi_c) # needs to be 90 - lat
+        lon = np.zeros(len(phi_c))
+    else:
+        # y is a scalar
+        print("idk something is broken")
+    # return x,y,z
+    return r, lat, lon
     # return a
 
 
@@ -117,9 +133,9 @@ def orbitalCuspLocation(c,t):
     """
     
     # the tsyg equation takes the coordinates as units of EARTH RADII
-    x = c.x
-    y = c.y
-    z = c.z
+    x = np.array(c.x)
+    y = np.array(c.y)
+    z = np.array(c.z)
     # make sure that r is in earth radii
     # this should be a list I think
 
@@ -128,7 +144,7 @@ def orbitalCuspLocation(c,t):
     # to do here.
 
     # why is it so big? :{
-    r = np.sqrt(x**2 + y**2 + z**2)/Re 
+    r = np.sqrt(x**2 + y**2 + z**2)/Re
     # print("r euqals to",r)
     psi = getTilt(t)
     psi = np.asarray(psi)
@@ -140,14 +156,19 @@ def orbitalCuspLocation(c,t):
     psi = np.deg2rad(psi)
     print("psi is",psi)
     phi_c = getPhi_c(r,psi)
-    # plt.plot(phi_c)
-    # plt.title('phi_c in ocl function')
-    # plt.show()
+    plt.plot(phi_c)
+    plt.title('phi_c in ocl function')
+    plt.show()
     # rsat = 1.127
+
+    # rectangular coordinates....
     xc,yc,zc = tsygCyl2Car(r,phi_c)
-    xc = xc*Re
-    yc = yc*Re
-    zc = zc*Re 
+    xc = np.array(xc)
+    yc = np.array(yc)
+    zc = np.array(zc)
+    #xc = xc*Re
+    #yc = yc*Re
+    #zc = zc*Re 
 
     # arctan
     # plt.plot(xc,zc)
