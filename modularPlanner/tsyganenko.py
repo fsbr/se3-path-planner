@@ -32,7 +32,7 @@ def getTilt(t):
     # convert to gsm
     c_gsm = c_sm.convert('GSM','car')
     # i set this to be negative as an experiment.
-    return np.rad2deg(np.arctan2(c_gsm.x,c_gsm.z))
+    return np.rad2deg(np.arctan2(c_gsm.x,c_gsm.z)) #changed from x,z to z,x
     
 def getPhi_c(r, psi=0):
     """
@@ -53,7 +53,7 @@ def getPhi_c(r, psi=0):
     # phi_1 = phi_c0 -(alpha_1*psi + alpha_2*psi**2)
     phi_1 = phi_c0
     num = np.sqrt(r)
-    den = np.sqrt(r + (1/(np.sin(phi_1)**2)) - 1) 
+    den = np.sqrt(r + (1/(np.sin(phi_1)))**-2 - 1) 
     # just an experiment to see hwat happens. original and "correct"
     # is + psi
     phi_c = np.arcsin(num/den) + psi
@@ -145,7 +145,7 @@ def orbitalCuspLocation(c,t):
 
     # why is it so big? :{
     r = np.sqrt(x**2 + y**2 + z**2)/Re
-    # print("r euqals to",r)
+    print("r euqals to",r)
     psi = getTilt(t)
     psi = np.asarray(psi)
     
@@ -156,9 +156,9 @@ def orbitalCuspLocation(c,t):
     psi = np.deg2rad(psi)
     print("psi is",psi)
     phi_c = getPhi_c(r,psi)
-    plt.plot(phi_c)
-    plt.title('phi_c in ocl function')
-    plt.show()
+    # plt.plot(phi_c)
+    # plt.title('phi_c in ocl function')
+    # plt.show()
     # rsat = 1.127
 
     # rectangular coordinates....

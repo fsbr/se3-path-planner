@@ -29,9 +29,9 @@ sys.path.append(pathname)
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
         'Oct', 'Nov', 'Dec']
 # months = ['Jan', 'Jul', 'Dec']
-inclinations = [i for i in  range(0,90,5)] #8 
-# inclinations = inclinations[::]
-months = months[::]
+inclinations = [i for i in  range(55,90,5)] #8 
+# inclinations = inclinations[::-1]
+# months = months[::-1]
 
 
 
@@ -80,7 +80,7 @@ def getColorMap(filename):
     # goal, plot PHI on the same plot
     xc,yc,zc = tsyg.orbitalCuspLocation(spacecraft,t)
     # originally 'SM'
-    cusp_location = coord.Coords([[i,j,k] for i,j,k in zip(xc,yc,zc)], 'SM', 'car')
+    cusp_location = coord.Coords([[i,j,k] for i,j,k in zip(xc,yc,zc)], 'SM', 'sph') # changed 
     cusp_location.ticks = Ticktock(t,'MJD')
     # cusp_location = cusp_location.convert('SM','car')
 
@@ -121,8 +121,8 @@ def getColorMap(filename):
     # In[5]:
 
     # the working configuration is 'SM'
-    spacecraft_sph = spacecraft.convert('SM','sph')
-    cusp_location_sph = cusp_location.convert('SM','sph')
+    spacecraft_sph = spacecraft.convert('GSM','sph')
+    cusp_location_sph = cusp_location.convert('GSM','sph')
 
 
     # In[6]:
@@ -147,7 +147,7 @@ def getColorMap(filename):
 
     # modlat = 90 - cusp_location_sph.lati 
     modlat = cusp_location_sph.lati
-    print("modlat",modlat)
+    print("LATITUDE IN CUSP LOCATION OBJECT",modlat)
 
 
     # In[7]:
@@ -158,7 +158,7 @@ def getColorMap(filename):
     for satlat,cusplat, satlon,cusplon in zip(spacecraft_sph.lati, modlat, spacecraft_sph.long, cusp_location_sph.long):
         # 0<cusplon<180 i think i need a way to ensure that I'm looking at the dayside 
         # bear in mind that these bounds WILL ONLY WORK in earth - sun line centered coordinate systems
-        if abs(satlat - cusplat)<=4 and abs(satlon-cusplon)<=4:
+        if abs(satlat - cusplat)<=2 and abs(satlon-cusplon)<=2: #earlier using 4 and 4
             # right now i'm using +/- 2 deg for the latitude,
             # and +/- 2 deg for the longitude
             c+=1
@@ -194,7 +194,7 @@ def getColorMap(filename):
     print("UTC date", spacecraft_sph.ticks.UTC)
     return c
 
-cma2  =[[getColorMap(pathname+month+str(inclination)+'_results.csv') for month in months[::] ] for inclination in inclinations] 
+cma2  =[[getColorMap(pathname+month+str(inclination)+'_results.csv') for month in months ] for inclination in inclinations] 
 if __name__ == "__main__":
     # cdict = {'red': ((0.0, 0.0, 0.0),
     #                  (0.5, 1.0, 0.7),
