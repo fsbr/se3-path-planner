@@ -50,6 +50,17 @@ def getColorMapSimple(filename):
     y = df['DefaultSC.gse.Y']
     z = df['DefaultSC.gse.Z']
 
+    # adding interpolation
+    tStart= t[0]
+    tEnd = t[len(t)-1]
+    tInterval = (t[1]-t[0])/10
+    t_0 = t
+    t = np.arange(tStart,tEnd,tInterval)
+    x = np.interp(t,t_0,x)
+    y = np.interp(t,t_0,y)
+    z = np.interp(t,t_0,z)
+ 
+
     #
     xa = np.array(x)
     ya = np.array(y)

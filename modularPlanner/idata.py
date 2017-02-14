@@ -17,10 +17,8 @@ y = df['DefaultSC.gse.Y']
 z = df['DefaultSC.gse.Z']
 # print(t)
 tStart= t[0]
-print("tStart",tStart)
 tEnd = t[len(t)-1]
-# print("tEnd",tEnd)
-tInterval = (t[1]-t[0])/100
+tInterval = (t[1]-t[0])/100 # i want to do 100 but it takes a while
 # for some reason, arange works and linspace doesnt.
 tnew = np.arange(tStart, tEnd, tInterval)
 xnew = np.interp(tnew,t,x)
@@ -31,3 +29,8 @@ print(znew)
 plt.plot(t,x,'o')
 plt.plot(tnew,xnew,'x')
 plt.show()
+
+plt.plot(t,z,'o')
+plt.plot(tnew,znew,'x')
+plt.show()
+
