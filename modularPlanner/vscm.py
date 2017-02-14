@@ -101,7 +101,14 @@ def getColorMapSimple(filename):
 
     r = np.sqrt(xa**2 + ya**2 + za**2)/Re
     print("r equals to",r)
-    phi_c = np.rad2deg(  np.arcsin((np.sqrt(r))/(np.sqrt(r + (1/np.sin(0.24))**2 - 1)))   ) +psi
+    psi = np.deg2rad(psi)
+    psi = np.array(psi)
+    phi_0 = 0.24
+    alpha1 = 0.1287
+    alpha2 = 0.0314
+    phi_1 = phi_0 - (alpha1*psi + alpha2*psi**2)
+
+    phi_c = np.rad2deg(np.arcsin((np.sqrt(r))/(np.sqrt(r + (1/np.sin(phi_1))**2 - 1)))   ) +psi
     #phi = 90-(phi+psi)
     lat = 90 - phi_c
     lon = np.array(np.zeros(len(spacecraft.ticks.MJD)))
