@@ -34,8 +34,8 @@ import sys
 Re = 6371
 earth_radius_ax = 1.5*Re #km
 #adding the year data here so I don't have to crush my github repo
-pathname = '../../data-se3-path-planner/yearData/batch2015/'
-# pathname = '../../batch2019/'
+# pathname = '../../data-se3-path-planner/yearData/batch2015/'
+pathname = '../../batch2019/'
 sys.path.append(pathname)
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec']
