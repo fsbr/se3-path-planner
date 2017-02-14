@@ -35,7 +35,7 @@ Re = 6371
 earth_radius_ax = 1.5*Re #km
 #adding the year data here so I don't have to crush my github repo
 # pathname = '../../data-se3-path-planner/yearData/batch2015/'
-pathname = '../../batch2019/'
+pathname = '../../batch2015/'
 sys.path.append(pathname)
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec']
@@ -51,14 +51,14 @@ def getColorMapSimple(filename):
     z = df['DefaultSC.gse.Z']
 
     # adding interpolation
-    tStart= t[0]
-    tEnd = t[len(t)-1]
-    tInterval = (t[1]-t[0])/10
-    t_0 = t
-    t = np.arange(tStart,tEnd,tInterval)
-    x = np.interp(t,t_0,x)
-    y = np.interp(t,t_0,y)
-    z = np.interp(t,t_0,z)
+    # tStart= t[0]
+    # tEnd = t[len(t)-1]
+    # tInterval = (t[1]-t[0])/10
+    # t_0 = t
+    # t = np.arange(tStart,tEnd,tInterval)
+    # x = np.interp(t,t_0,x)
+    # y = np.interp(t,t_0,y)
+    # z = np.interp(t,t_0,z)
  
 
     #
@@ -144,16 +144,23 @@ def getColorMapSimple(filename):
     # In[7]:
 
     count = []
+    region = []
     c = 0
     for satlat,cusplat, satlon,cusplon in zip(spacecraft_sm.lati, lat, spacecraft_sm.long, lon):
         # 0<=cusplon<180
         if abs(satlat - cusplat)<=4 and abs(satlon-cusplon)<=4:
             # right now i'm using +/- 2 deg for the latitude,
             # and +/- 2 deg for the longitude
-            c+=1
-            count.append(c)
+            # c+=1
+            region.append(1)
         else:
-            count.append(c)
+            region.append(0)
+
+    for x,x1 in zip(region,region[1:]):
+        if x==0 and x1 ==1:
+            c +=1
+        else:
+            pass
             
     # plt.plot(spacecraft_sm.ticks.MJD, count)
     # plt.xlabel('MJD tick')
