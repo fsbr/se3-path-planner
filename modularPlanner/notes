@@ -1,2 +1,17 @@
 what i'm doing is trying to generate the
 fucking colormap.  let's GO
+
+one thing really annoying is that i actually didnt do a linear timestep
+i did a variable timestep. testing random datapoints led to
+
+60s step
+90s step etc.
+99.81 seconds etc.
+
+fix
+1. add interpolation so that the most time between is 1 second,
+
+this means like a 100 point interpolation (for now lets assume linear is fine)
+
+2. collision detect my counter
+
