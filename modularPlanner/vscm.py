@@ -155,7 +155,7 @@ def getColorMapSimple(filename):
     c = 0
     for satlat,cusplat, satlon,cusplon in zip(spacecraft_sm.lati, lat, spacecraft_sm.long, lon):
         # 0<=cusplon<180
-        if abs(satlat - cusplat)<=4 and abs(satlon-cusplon)<=4:
+        if abs(satlat - cusplat)<=1 and abs(satlon-cusplon)<=2:
             # right now i'm using +/- 2 deg for the latitude,
             # and +/- 2 deg for the longitude
             # c+=1
@@ -179,6 +179,9 @@ def getColorMapSimple(filename):
     return c
 
 cma2 = [[getColorMapSimple(pathname+month+str(inclination)+'_results.csv') for month in months] for inclination in inclinations]
+f = open('cma2.dat','w')
+print(cma2,file=f)
+
 
 if __name__ == "__main__":
     # cdict = {'red': ((0.0, 0.0, 0.0),
