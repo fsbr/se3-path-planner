@@ -34,12 +34,12 @@ import sys
 Re = 6371
 earth_radius_ax = 1.5*Re #km
 #adding the year data here so I don't have to crush my github repo
-# pathname = '../../data-se3-path-planner/yearData/batch2015/'
-pathname = '../../batch2015/'
+pathname = '../../data-se3-path-planner/yearData/batch2018/'
+# pathname = '../../batch2015/'
 sys.path.append(pathname)
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec']
-inclinations = [i for i in range(55,90,5)]
+inclinations = [i for i in range(0,90,2)]
 
 # In[2]:
 def getColorMapSimple(filename):
@@ -51,14 +51,14 @@ def getColorMapSimple(filename):
     z = df['DefaultSC.gse.Z']
 
     # adding interpolation
-    # tStart= t[0]
-    # tEnd = t[len(t)-1]
-    # tInterval = (t[1]-t[0])/10
-    # t_0 = t
-    # t = np.arange(tStart,tEnd,tInterval)
-    # x = np.interp(t,t_0,x)
-    # y = np.interp(t,t_0,y)
-    # z = np.interp(t,t_0,z)
+    tStart= t[0]
+    tEnd = t[len(t)-1]
+    tInterval = (t[1]-t[0])/10
+    t_0 = t
+    t = np.arange(tStart,tEnd,tInterval)
+    x = np.interp(t,t_0,x)
+    y = np.interp(t,t_0,y)
+    z = np.interp(t,t_0,z)
  
 
     #
@@ -155,7 +155,7 @@ def getColorMapSimple(filename):
     c = 0
     for satlat,cusplat, satlon,cusplon in zip(spacecraft_sm.lati, lat, spacecraft_sm.long, lon):
         # 0<=cusplon<180
-        if abs(satlat - cusplat)<=1 and abs(satlon-cusplon)<=2:
+        if abs(satlat - cusplat)<=2 and abs(satlon-cusplon)<=2:
             # right now i'm using +/- 2 deg for the latitude,
             # and +/- 2 deg for the longitude
             # c+=1
